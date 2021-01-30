@@ -1,2 +1,2 @@
 # Nonogram
-A nonogram generater and solver.
+A nonogram generater and solver, ongoing.
