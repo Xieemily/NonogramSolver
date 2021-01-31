@@ -41,14 +41,14 @@ public class ImgProcess {
                     int g = (0x0000ff00 & val) >> 8;
                     int b = (0x000000ff & val);
                     int m=(r+g+b);
-                    // (255+255+255)/2 =283 middle of dark and light
+                    // (255+255+255)/2 =283 middle of intensity
                     if(m>=283)
                     {
-                        // for light color it set white
+                        // for light color, set white
                         binaryImg.setRGB(i, j, Color.WHITE.getRGB());
                     }
                     else{
-                        // for dark color it will set black
+                        // for dark color, set black
                         binaryImg.setRGB(i, j, 0);
                         rec[j][i] = 1;
                     }
@@ -59,6 +59,7 @@ public class ImgProcess {
         ImageIO.write(binaryImg, "jpg", file);
         return binaryImg;
     }
+
     private BufferedImage ResizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) throws IOException {
         BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = resizedImage.createGraphics();
@@ -66,6 +67,7 @@ public class ImgProcess {
         graphics2D.dispose();
         return resizedImage;
     }
+
     public void DisplayImage(BufferedImage img) throws IOException {
         ImageIcon icon=new ImageIcon(img);
         JFrame frame=new JFrame();

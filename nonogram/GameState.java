@@ -10,26 +10,51 @@ public class GameState {
     private static final int BOARD_SIZE = 10;
     private static final int HINT_SIZE = (BOARD_SIZE+1)/2;
 
-    private int board[][] = new int[BOARD_SIZE][BOARD_SIZE];
+    enum CellState{
+        FILLED,
+        EMPTY,
+        UNKNOWN
+    }
+
+    private static CellState board[][] = new CellState[BOARD_SIZE][BOARD_SIZE];
 
     private List<List<Integer>> hintRow = new ArrayList<>();
     private List<List<Integer>> hintCol = new ArrayList<>();
 
-    GameState(){}
+    GameState(){
+        for(int i = 0; i < BOARD_SIZE; i++)
+            for(int j = 0; j < BOARD_SIZE; j++)
+                board[i][j] = CellState.UNKNOWN;
+    }
 
     void Move(int x, int y){
-        board[x][y] = 1;
+        board[x][y] = CellState.FILLED;
     }
 
     void Remove(int x, int y){
-        board[x][y] = 0;
+        board[x][y] = CellState.EMPTY;
+    }
+
+    public static int getBoardSize(){
+        return BOARD_SIZE;
+    }
+
+    public static void setBoard(CellState state, int x, int y){
+        board[x][y] = state;
+    }
+
+    public static CellState getBoard(int x, int y){
+        return board[x][y];
     }
 
     void ShowBoard(){
         for(int i = 0; i < BOARD_SIZE; i++){
             // print value of i th row
             for(int j = 0; j < BOARD_SIZE; j++){
-                System.out.print(" "+ board[i][j]+" |");
+                if(board[i][j] == CellState.FILLED)
+                    System.out.print(" x |");
+                else
+                    System.out.print("   |");
             }
             System.out.println();
             // print horizontal line
@@ -46,9 +71,9 @@ public class GameState {
         for(int i = 0; i < board.length; i++)
             for(int j = 0; j < board.length; j++){
                 if(imgProc.rec[i][j] == 1){
-                    board[i][j] = 1;
+                    board[i][j] = CellState.FILLED;
                 } else
-                    board[i][j] = 0;
+                    board[i][j] = CellState.EMPTY;
             }
 
     }
@@ -59,7 +84,7 @@ public class GameState {
         for(int i = 0; i < board.length; i++) {
             ArrayList<Integer> arrayList = new ArrayList<>();
             for (int j = 0; j < board.length; j++) {
-                if (board[i][j] == 1) {
+                if (board[i][j] == CellState.FILLED) {
                     cnt++; // count continuous cells
                     if(j == board.length-1)arrayList.add(cnt); // last cell is filled, store cnt
                 } else { // this cell is empty, store number of previous continuous cells
@@ -73,7 +98,7 @@ public class GameState {
         for(int i = 0; i < board.length; i++) {
             ArrayList<Integer> arrayList = new ArrayList<>();
             for (int j = 0; j < board.length; j++) {
-                if (board[j][i] == 1) {
+                if (board[j][i] == CellState.FILLED) {
                     cnt++;
                     if(j == board.length-1)arrayList.add(cnt); // last cell
                 } else {
