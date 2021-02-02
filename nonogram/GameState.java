@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameState {
-
-    private static final int BOARD_SIZE = 10;
-    private static final int HINT_SIZE = (BOARD_SIZE+1)/2;
+    static int BOARD_SIZE;
+    protected static final int HINT_SIZE = (BOARD_SIZE+1)/2;
 
     enum CellState{
         FILLED,
@@ -16,16 +15,28 @@ public class GameState {
         UNKNOWN
     }
 
-    private static CellState board[][] = new CellState[BOARD_SIZE][BOARD_SIZE];
+    protected static CellState board[][];
 
-    private List<List<Integer>> hintRow = new ArrayList<>();
-    private List<List<Integer>> hintCol = new ArrayList<>();
+    protected ArrayList<ArrayList<Integer>> hintRow = new ArrayList<>();
+    protected ArrayList<ArrayList<Integer>> hintCol = new ArrayList<>();
 
-    GameState(){
+    GameState(ArrayList<ArrayList<Integer>> _hintRow, ArrayList<ArrayList<Integer>> _hintCol, int _gameSize){
+        BOARD_SIZE = _gameSize;
+        hintRow = _hintRow;
+        hintCol = _hintCol;
+        board = new CellState[BOARD_SIZE][BOARD_SIZE];
         for(int i = 0; i < BOARD_SIZE; i++)
             for(int j = 0; j < BOARD_SIZE; j++)
                 board[i][j] = CellState.UNKNOWN;
     }
+
+    GameState(String path, int _gameSize) throws IOException {
+        BOARD_SIZE = _gameSize;
+        board = new CellState[BOARD_SIZE][BOARD_SIZE];
+        GenerateGameFromImg(path);
+        GenerateHint();
+    }
+
 
     void Move(int x, int y){
         board[x][y] = CellState.FILLED;
@@ -53,8 +64,10 @@ public class GameState {
             for(int j = 0; j < BOARD_SIZE; j++){
                 if(board[i][j] == CellState.FILLED)
                     System.out.print(" x |");
-                else
+                else if(board[i][j] == CellState.EMPTY)
                     System.out.print("   |");
+                else
+                    System.out.print(" ? |");
             }
             System.out.println();
             // print horizontal line
@@ -65,7 +78,7 @@ public class GameState {
 
     public void GenerateGameFromImg(String path) throws IOException {
         ImgProcess imgProc = new ImgProcess();
-        imgProc.ProcessImage(path);
+        imgProc.ProcessImage(path, BOARD_SIZE);
 
         // copy processed image array to board
         for(int i = 0; i < board.length; i++)
@@ -86,7 +99,10 @@ public class GameState {
             for (int j = 0; j < board.length; j++) {
                 if (board[i][j] == CellState.FILLED) {
                     cnt++; // count continuous cells
-                    if(j == board.length-1)arrayList.add(cnt); // last cell is filled, store cnt
+                    if(j == board.length-1){
+                        arrayList.add(cnt); // last cell is filled, store cnt
+                        cnt = 0;
+                    }
                 } else { // this cell is empty, store number of previous continuous cells
                     if (cnt != 0) arrayList.add(cnt);
                     cnt = 0; // reset cnt
@@ -94,13 +110,17 @@ public class GameState {
             }
             hintRow.add(arrayList);
         } // end for
+        cnt = 0;
         // column
         for(int i = 0; i < board.length; i++) {
             ArrayList<Integer> arrayList = new ArrayList<>();
             for (int j = 0; j < board.length; j++) {
                 if (board[j][i] == CellState.FILLED) {
                     cnt++;
-                    if(j == board.length-1)arrayList.add(cnt); // last cell
+                    if(j == board.length-1){
+                        arrayList.add(cnt); // last cell
+                        cnt = 0;
+                    }
                 } else {
                     if (cnt != 0) arrayList.add(cnt);
                     cnt = 0;
@@ -109,4 +129,6 @@ public class GameState {
             hintCol.add(arrayList);
         } // end for
     } // end GenerateHint
+
+
 }

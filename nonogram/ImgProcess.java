@@ -13,10 +13,11 @@ import static java.awt.color.ColorSpace.CS_GRAY;
 
 public class ImgProcess {
     private BufferedImage img;
-    private static int IMG_SIZE = 10;
-    public int rec[][] = new int[IMG_SIZE][IMG_SIZE];
-    public void ProcessImage(String str) throws IOException {
+    private static int IMG_SIZE;
+    public int rec[][];
+    public void ProcessImage(String str, int _gameSize) throws IOException {
         BufferedImage srcImg = null;
+        IMG_SIZE = _gameSize;
         try {
             srcImg = ImageIO.read(new File(str));
         } catch (IOException e) {
@@ -25,6 +26,7 @@ public class ImgProcess {
         img = ConvertToBinary(ResizeImage(srcImg, IMG_SIZE, IMG_SIZE));
     }
     private BufferedImage ConvertToBinary(BufferedImage srcImg) throws IOException {
+        rec = new int[IMG_SIZE][IMG_SIZE];
         BufferedImage binaryImg = new BufferedImage(IMG_SIZE, IMG_SIZE, BufferedImage.TYPE_INT_RGB);
         if (srcImg == null) {
             System.out.println("No image loaded");
