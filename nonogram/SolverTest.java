@@ -1,5 +1,4 @@
 package com.nonogram;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -9,11 +8,11 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SolverTest {
-    Solver solver= new Solver();
+    private final Solver solver= new Solver();
 
     // covers hint = [1]
     @Test
-    public void TestLabeling1(){
+    void TestLabeling1(){
 
         ArrayList<Integer> hint = new ArrayList<>();
         hint.add(1);
@@ -22,7 +21,7 @@ class SolverTest {
 
     // covers hint = [2, 1]
     @Test
-    public void TestLabeling(){
+    void TestLabeling(){
 
         ArrayList<Integer> hint = new ArrayList<>();
         ArrayList<Integer> arr = new ArrayList<>();
@@ -33,7 +32,7 @@ class SolverTest {
 
     // covers shift = -1
     @Test
-    public void TestGenerateMapPrevious(){
+    void TestGenerateMapPrevious(){
         ArrayList<Integer> hint = new ArrayList<>();
         hint.add(3);
         hint.add(4);
@@ -42,7 +41,7 @@ class SolverTest {
 
     // covers shift = 1
     @Test
-    public void TestGenerateMapFront(){
+    void TestGenerateMapFront(){
         ArrayList<Integer> labeling = new ArrayList<>();
         labeling.add(-1);labeling.add(-1);labeling.add(2);labeling.add(3);labeling.add(4);labeling.add(-5);
         labeling.add(-5);labeling.add(6);labeling.add(7);labeling.add(8);labeling.add(-9);labeling.add(-9);
@@ -50,7 +49,7 @@ class SolverTest {
     }
 
     @Test
-    public void TestInitLine(){
+    void TestInitLine(){
         ArrayList<Integer> hint = new ArrayList<>();
         hint.add(2); hint.add(7);
         System.out.println(solver.InitLine(hint));
@@ -58,14 +57,14 @@ class SolverTest {
 
     // covers hint = []
     @Test
-    public void TestInitLineEmpty(){
+    void TestInitLineEmpty(){
         ArrayList<Integer> hint = new ArrayList<>();
         System.out.println(solver.InitLine(hint));
     }
 
     // covers hint = [1]
     @Test
-    public void TestInitLineOne(){
+    void TestInitLineOne(){
         ArrayList<Integer> hint = new ArrayList<>();
         hint.add(1);
         System.out.println(solver.InitLine(hint));
@@ -73,7 +72,7 @@ class SolverTest {
 
     // covers hint = [10]
     @Test
-    public void TestInitLineFull(){
+    void TestInitLineFull(){
         ArrayList<Integer> hint = new ArrayList<>();
         hint.add(10);
         System.out.println(solver.InitLine(hint));

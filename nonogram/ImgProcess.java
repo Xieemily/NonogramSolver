@@ -3,28 +3,43 @@ package com.nonogram;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
 import java.io.File;
 import java.io.IOException;
 
-import static java.awt.color.ColorSpace.CS_GRAY;
-
-public class ImgProcess {
+class ImgProcess {
     private BufferedImage img;
     private static int IMG_SIZE;
-    public int rec[][];
-    public void ProcessImage(String str, int _gameSize) throws IOException {
+    public int[][] rec;
+
+    /**
+     * Read image from file and convert it to binary image
+     *
+     * @param path
+     *          path of source image
+     * @param _gameSize
+     *          specify board length
+     *
+     */
+    public void ProcessImage(String path, int _gameSize) throws IOException {
         BufferedImage srcImg = null;
         IMG_SIZE = _gameSize;
         try {
-            srcImg = ImageIO.read(new File(str));
+            srcImg = ImageIO.read(new File(path));
         } catch (IOException e) {
             System.out.println("Error read: "+e);
         }
         img = ConvertToBinary(ResizeImage(srcImg, IMG_SIZE, IMG_SIZE));
     }
+
+    /**
+     * Convert input image to binary image by comparing pixel intensity
+     *
+     * @param srcImg
+     *          path of source image
+     * @return binaryImage
+     *
+     */
     private BufferedImage ConvertToBinary(BufferedImage srcImg) throws IOException {
         rec = new int[IMG_SIZE][IMG_SIZE];
         BufferedImage binaryImg = new BufferedImage(IMG_SIZE, IMG_SIZE, BufferedImage.TYPE_INT_RGB);
@@ -62,7 +77,7 @@ public class ImgProcess {
         return binaryImg;
     }
 
-    private BufferedImage ResizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) throws IOException {
+    private BufferedImage ResizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
         BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = resizedImage.createGraphics();
         graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
@@ -70,7 +85,7 @@ public class ImgProcess {
         return resizedImage;
     }
 
-    public void DisplayImage(BufferedImage img) throws IOException {
+    public void DisplayImage(BufferedImage img) {
         ImageIcon icon=new ImageIcon(img);
         JFrame frame=new JFrame();
         frame.setLayout(new FlowLayout());

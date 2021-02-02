@@ -1,13 +1,8 @@
 package com.nonogram;
 
-import java.security.cert.TrustAnchor;
 import java.util.*;
 
-public class Solver {
-    private void ForwardPass(){
-
-    }
-
+class Solver {
     /**
      * Generate labeling given hint of one line, in order to get map.
      * Use the same negative number for empty cells(since its length is changeable),
@@ -21,7 +16,7 @@ public class Solver {
      *
      */
     public ArrayList<Integer> GenerateLabeling(ArrayList<Integer> hint){
-        ArrayList<Integer> labeling = new ArrayList<Integer>();
+        ArrayList<Integer> labeling = new ArrayList<>();
         // empty line
         if(hint.isEmpty()){
             labeling.add(-1);
@@ -55,8 +50,8 @@ public class Solver {
      * @return labeling
      *
      */
-    public ArrayList<Integer> GenerateSingleLabeling(ArrayList<Integer> hint){
-        ArrayList<Integer> labeling = new ArrayList<Integer>();
+    private ArrayList<Integer> GenerateSingleLabeling(ArrayList<Integer> hint){
+        ArrayList<Integer> labeling = new ArrayList<>();
         // empty line
         if(hint.isEmpty()){
             labeling.add(-1);
@@ -92,7 +87,7 @@ public class Solver {
      */
     public Map<Integer, Set<Integer>> GenerateMap(ArrayList<Integer> hint, int shift){
         ArrayList<Integer> labeling = GenerateLabeling(hint);
-        Map<Integer, Set<Integer>> map = new HashMap<Integer, Set<Integer>>();
+        Map<Integer, Set<Integer>> map = new HashMap<>();
         for(int i = 0; i < labeling.size(); i++){
             int tmp_label = labeling.get(i);
             int nxt_label; // shifted labeling
@@ -125,8 +120,8 @@ public class Solver {
      */
     public ArrayList<Set<Integer>> InitLine(ArrayList<Integer> hint){
         ArrayList<Integer> labeling = GenerateSingleLabeling(hint);
-        ArrayList<Set<Integer>> lineSet = new ArrayList<Set<Integer>>();
-        // calculate minimum length of block
+        ArrayList<Set<Integer>> lineSet = new ArrayList<>();
+        // calculate length of block
         int sumBlock = 0;
         for(int i:hint)sumBlock += i;
         // moves needed to get to right most position
@@ -193,7 +188,7 @@ public class Solver {
      *
      */
     public ArrayList<Set<Integer>> BackwardPass(ArrayList<Set<Integer>> lineSet, Map<Integer, Set<Integer>> map){
-        Collections.reverse(lineSet);
+        Collections.reverse(lineSet); // reverse line
         Set<Integer> available = new HashSet<>();
         for(Set<Integer> set:lineSet){
             if(!available.isEmpty()) { // not first one
@@ -207,5 +202,4 @@ public class Solver {
         Collections.reverse(lineSet);
         return lineSet;
     }
-
 }

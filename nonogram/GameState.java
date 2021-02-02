@@ -1,13 +1,10 @@
 package com.nonogram;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GameState {
     static int BOARD_SIZE;
-    protected static final int HINT_SIZE = (BOARD_SIZE+1)/2;
 
     enum CellState{
         FILLED,
@@ -15,10 +12,10 @@ public class GameState {
         UNKNOWN
     }
 
-    protected static CellState board[][];
+    final CellState[][] board;
 
-    protected ArrayList<ArrayList<Integer>> hintRow = new ArrayList<>();
-    protected ArrayList<ArrayList<Integer>> hintCol = new ArrayList<>();
+    ArrayList<ArrayList<Integer>> hintRow = new ArrayList<>();
+    ArrayList<ArrayList<Integer>> hintCol = new ArrayList<>();
 
     GameState(ArrayList<ArrayList<Integer>> _hintRow, ArrayList<ArrayList<Integer>> _hintCol, int _gameSize){
         BOARD_SIZE = _gameSize;
@@ -50,11 +47,11 @@ public class GameState {
         return BOARD_SIZE;
     }
 
-    public static void setBoard(CellState state, int x, int y){
+    public void setBoard(CellState state, int x, int y){
         board[x][y] = state;
     }
 
-    public static CellState getBoard(int x, int y){
+    public CellState getBoard(int x, int y){
         return board[x][y];
     }
 
@@ -76,14 +73,14 @@ public class GameState {
         }
     }
 
-    public void GenerateGameFromImg(String path) throws IOException {
-        ImgProcess imgProc = new ImgProcess();
-        imgProc.ProcessImage(path, BOARD_SIZE);
+    private void GenerateGameFromImg(String path) throws IOException {
+        ImgProcess imgProcess = new ImgProcess();
+        imgProcess.ProcessImage(path, BOARD_SIZE);
 
         // copy processed image array to board
         for(int i = 0; i < board.length; i++)
             for(int j = 0; j < board.length; j++){
-                if(imgProc.rec[i][j] == 1){
+                if(imgProcess.rec[i][j] == 1){
                     board[i][j] = CellState.FILLED;
                 } else
                     board[i][j] = CellState.EMPTY;
@@ -91,15 +88,15 @@ public class GameState {
 
     }
 
-    public void GenerateHint(){
+    private void GenerateHint(){
         int cnt = 0; // count continuous filled cells
         // row
-        for(int i = 0; i < board.length; i++) {
+        for (CellState[] cellStates : board) {
             ArrayList<Integer> arrayList = new ArrayList<>();
             for (int j = 0; j < board.length; j++) {
-                if (board[i][j] == CellState.FILLED) {
+                if (cellStates[j] == CellState.FILLED) {
                     cnt++; // count continuous cells
-                    if(j == board.length-1){
+                    if (j == board.length - 1) {
                         arrayList.add(cnt); // last cell is filled, store cnt
                         cnt = 0;
                     }
