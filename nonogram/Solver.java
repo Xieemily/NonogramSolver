@@ -10,15 +10,13 @@ class Solver {
      * for example: hint[3,4], assume 10 cells each line
      * labeling[-1, -1, 2, 3, 4, -5, -5, 6, 7, 8, 9, -10, -10]
      *
-     * @param hint
-     *            hint list of one line
+     * @param hint hint list of one line
      * @return labeling
-     *
      */
-    public ArrayList<Integer> GenerateLabeling(ArrayList<Integer> hint){
+    public ArrayList<Integer> GenerateLabeling(ArrayList<Integer> hint) {
         ArrayList<Integer> labeling = new ArrayList<>();
         // empty line
-        if(hint.isEmpty()){
+        if (hint.isEmpty()) {
             labeling.add(-1);
             labeling.add(-1);
             return labeling;
@@ -28,10 +26,10 @@ class Solver {
         for (Integer i : hint) {
             labeling.add(-n);
             labeling.add(-n); // negative value twice because -1 can appear after -1
-            for(int k = 0; k < i; k++){
-                labeling.add(n+k+1);
+            for (int k = 0; k < i; k++) {
+                labeling.add(n + k + 1);
             }
-            n += i+1;
+            n += i + 1;
         }
         labeling.add(-n);
         labeling.add(-n);
@@ -45,15 +43,13 @@ class Solver {
      * for example: hint[3,4], assume 10 cells each line
      * labeling[-1, -1, 2, 3, 4, -5, -5, 6, 7, 8, 9, -10, -10]
      *
-     * @param hint
-     *            hint list of one line
+     * @param hint hint list of one line
      * @return labeling
-     *
      */
-    private ArrayList<Integer> GenerateSingleLabeling(ArrayList<Integer> hint){
+    private ArrayList<Integer> GenerateSingleLabeling(ArrayList<Integer> hint) {
         ArrayList<Integer> labeling = new ArrayList<>();
         // empty line
-        if(hint.isEmpty()){
+        if (hint.isEmpty()) {
             labeling.add(-1);
             return labeling;
         }
@@ -61,10 +57,10 @@ class Solver {
         int n = 1; // count
         for (Integer i : hint) {
             labeling.add(-n); // negative value twice because -1 can appear after -1
-            for(int k = 0; k < i; k++){
-                labeling.add(n+k+1);
+            for (int k = 0; k < i; k++) {
+                labeling.add(n + k + 1);
             }
-            n += i+1;
+            n += i + 1;
         }
         labeling.add(-n);
         return labeling;
@@ -77,28 +73,25 @@ class Solver {
      * [-1, 2,  3, 4, -5, -5, 6, 7, -8, -8]
      * map: -1->-1, -1->2, 2->3, 3->4, ... -5->(-5,6), ...
      *
-     * @param hint
-     *          hint list of one line
-     * @param shift
-     *          size of shift. Requires [-1, 1]
+     * @param hint  hint list of one line
+     * @param shift size of shift. Requires [-1, 1]
      * @return map
-     *          a map indicate what number can appear after/before cell n
-     *
+     * a map indicate what number can appear after/before cell n
      */
-    public Map<Integer, Set<Integer>> GenerateMap(ArrayList<Integer> hint, int shift){
+    public Map<Integer, Set<Integer>> GenerateMap(ArrayList<Integer> hint, int shift) {
         ArrayList<Integer> labeling = GenerateLabeling(hint);
         Map<Integer, Set<Integer>> map = new HashMap<>();
-        for(int i = 0; i < labeling.size(); i++){
+        for (int i = 0; i < labeling.size(); i++) {
             int tmp_label = labeling.get(i);
             int nxt_label; // shifted labeling
             // get shifted label if exists
-            try{
-                nxt_label = labeling.get(i+shift);
-            } catch (IndexOutOfBoundsException e){
+            try {
+                nxt_label = labeling.get(i + shift);
+            } catch (IndexOutOfBoundsException e) {
                 continue; // no corresponding label, ignore
             }
             // add shifted label to current label's map set
-            if(map.containsKey(tmp_label)){ // add to set
+            if (map.containsKey(tmp_label)) { // add to set
                 map.get(tmp_label).add(nxt_label);
             } else { // initialize a set
                 Set<Integer> set = new HashSet<>();
@@ -112,30 +105,28 @@ class Solver {
     /**
      * Get possible label sets of one line, consider left/right most situation and take labels in between
      *
-     * @param hint
-     *          hint list of one line
+     * @param hint hint list of one line
      * @return lineSet
-     *          a list of sets, each set contains the labels that could appear in one cell
-     *
+     * a list of sets, each set contains the labels that could appear in one cell
      */
-    public ArrayList<Set<Integer>> InitLine(ArrayList<Integer> hint){
+    public ArrayList<Set<Integer>> InitLine(ArrayList<Integer> hint) {
         ArrayList<Integer> labeling = GenerateSingleLabeling(hint);
         ArrayList<Set<Integer>> lineSet = new ArrayList<>();
         // calculate length of block
         int sumBlock = 0;
-        for(int i:hint)sumBlock += i;
+        for (int i : hint) sumBlock += i;
         // moves needed to get to right most position
         int move = GameState.getBoardSize() - sumBlock - hint.size() + 1;
         // cell label in between
-        for(int cell = 0; cell < GameState.getBoardSize(); cell++){
+        for (int cell = 0; cell < GameState.getBoardSize(); cell++) {
             Set<Integer> cellSet = new HashSet<>();
-            for(int i = 0; i <= move; i++){ // get value in between
+            for (int i = 0; i <= move; i++) { // get value in between
                 // get label of shifted right most position
                 int label;
                 try {
                     label = labeling.get(1 + cell - i); // plus 1 to get to left most position [-1, *2* ...]
-                } catch (IndexOutOfBoundsException e){
-                    if(1 + cell -i < 0) { // first group of blank, label -1
+                } catch (IndexOutOfBoundsException e) {
+                    if (1 + cell - i < 0) { // first group of blank, label -1
                         label = -1;
                     } else { // last group of blank, last label
                         label = labeling.get(labeling.size() - 1);
@@ -153,22 +144,19 @@ class Solver {
     /**
      * Forward pass one line, get possible next cell's labels by mapping current cell's labels, intersect them
      *
-     * @param lineSet
-     *          list of sets in one line
-     * @param map
-     *          map of labels of this line
+     * @param lineSet list of sets in one line
+     * @param map     map of labels of this line
      * @return lineSet
-     *          list of sets after forward pass, each set contains the labels that could appear in one cell
-     *
+     * list of sets after forward pass, each set contains the labels that could appear in one cell
      */
-    public ArrayList<Set<Integer>> ForwardPass(ArrayList<Set<Integer>> lineSet, Map<Integer, Set<Integer>> map){
+    public ArrayList<Set<Integer>> ForwardPass(ArrayList<Set<Integer>> lineSet, Map<Integer, Set<Integer>> map) {
         Set<Integer> available = new HashSet<>();
-        for(Set<Integer> set:lineSet){
-            if(!available.isEmpty()) { // not first one
+        for (Set<Integer> set : lineSet) {
+            if (!available.isEmpty()) { // not first one
                 set.retainAll(available); // intersect with available label
                 available.clear();
             }
-            for(int i:set){
+            for (int i : set) {
                 available.addAll(map.get(i)); // available labels of next cell
             }
         }
@@ -179,23 +167,20 @@ class Solver {
      * Backward pass one line, get possible previous cell's labels by mapping(-1 shift map)
      * current cell's labels, intersect them
      *
-     * @param lineSet
-     *          list of sets in one line
-     * @param map
-     *          map of labels of this line
+     * @param lineSet list of sets in one line
+     * @param map     map of labels of this line
      * @return lineSet
-     *          list of sets after forward pass, each set contains the labels that could appear in one cell
-     *
+     * list of sets after forward pass, each set contains the labels that could appear in one cell
      */
-    public ArrayList<Set<Integer>> BackwardPass(ArrayList<Set<Integer>> lineSet, Map<Integer, Set<Integer>> map){
+    public ArrayList<Set<Integer>> BackwardPass(ArrayList<Set<Integer>> lineSet, Map<Integer, Set<Integer>> map) {
         Collections.reverse(lineSet); // reverse line
         Set<Integer> available = new HashSet<>();
-        for(Set<Integer> set:lineSet){
-            if(!available.isEmpty()) { // not first one
+        for (Set<Integer> set : lineSet) {
+            if (!available.isEmpty()) { // not first one
                 set.retainAll(available); // intersect with available label
                 available.clear();
             }
-            for(int i:set){
+            for (int i : set) {
                 available.addAll(map.get(i)); // available labels of next cell
             }
         }

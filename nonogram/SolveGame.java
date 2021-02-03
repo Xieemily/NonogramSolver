@@ -1,19 +1,22 @@
 package com.nonogram;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Array;
+import java.util.*;
 
 class SolveGame extends GameState {
     private final Solver solver = new Solver();
     // record sets of possible labels separately
-    private final ArrayList<ArrayList<Set<Integer>>> rowListOfSet = new ArrayList<>();
-    private final ArrayList<ArrayList<Set<Integer>>> colListOfSet = new ArrayList<>();
+    private ArrayList<ArrayList<Set<Integer>>> rowListOfSet = new ArrayList<>();
+    private ArrayList<ArrayList<Set<Integer>>> colListOfSet = new ArrayList<>();
     // record maps separately
-    private final ArrayList<Map<Integer, Set<Integer>>> rowListOfMapForward = new ArrayList<>();
-    private final ArrayList<Map<Integer, Set<Integer>>> colListOfMapForward = new ArrayList<>();
-    private final ArrayList<Map<Integer, Set<Integer>>> rowListOfMapBackward = new ArrayList<>();
-    private final ArrayList<Map<Integer, Set<Integer>>> colListOfMapBackward = new ArrayList<>();
+    private ArrayList<Map<Integer, Set<Integer>>> rowListOfMapForward = new ArrayList<>();
+    private ArrayList<Map<Integer, Set<Integer>>> colListOfMapForward = new ArrayList<>();
+    private ArrayList<Map<Integer, Set<Integer>>> rowListOfMapBackward = new ArrayList<>();
+    private ArrayList<Map<Integer, Set<Integer>>> colListOfMapBackward = new ArrayList<>();
+    // record visited board hash
+    Set<Integer> vis = new HashSet<>();
+    // record solution
+    ArrayList<String> solution = new ArrayList<>();
 
     SolveGame(ArrayList<ArrayList<Integer>> _hintRow, ArrayList<ArrayList<Integer>> _hintCol, int _gameSize) {
         super(_hintRow, _hintCol, _gameSize);
@@ -133,6 +136,97 @@ class SolveGame extends GameState {
             DeductBoard();
             changed = DeductLabel();
             PassBoard();
+        }
+    }
+
+    /**
+     * Deep copy matrix
+     * @param matrix matrix to be copied
+     * @param <T> element type
+     * @return Copied matrix
+     */
+    <T> T[][] deepCopy(T[][] matrix) {
+        return java.util.Arrays.stream(matrix).map(el -> el.clone()).toArray($ -> matrix.clone());
+    }
+
+    /**
+     * Deep copy sets of board
+     * @return Copied list of list of set
+     */
+    ArrayList<ArrayList<Set<Integer>>> CopySetList(ArrayList<ArrayList<Set<Integer>>> list){
+        ArrayList<ArrayList<Set<Integer>>> copied = new ArrayList<>();
+        for(int i = 0; i < BOARD_SIZE; i++){
+            ArrayList<Set<Integer>> listInner = new ArrayList<>();
+            for(int j = 0; j < BOARD_SIZE; j++){
+                Set<Integer> set = new HashSet<>(list.get(i).get(j));
+                listInner.add(set);
+            }
+            copied.add(listInner);
+        }
+        return copied;
+    }
+
+    /**
+     * Deep copy maps of board
+     * @param list map list of board
+     * @return copied list
+     */
+    ArrayList<Map<Integer, Set<Integer>>> CopyMapList(ArrayList<Map<Integer, Set<Integer>>> list){
+        ArrayList<Map<Integer, Set<Integer>>> copied = new ArrayList<>();
+        for(int i = 0; i < BOARD_SIZE; i++){
+            Map<Integer, Set<Integer>> map= new HashMap<>();
+            for(Map.Entry<Integer, Set<Integer>> entry:list.get(i).entrySet()){
+                Set<Integer> copiedSet = new HashSet<>(entry.getValue());
+                map.put(entry.getKey(), copiedSet);
+            }
+            copied.add(map);
+        }
+        return copied;
+    }
+
+    /**
+     * For game with multiple solutions, guess is needed, use dfs search
+     */
+    public void Guess(){
+        if(vis.contains(BoardHash()))return;
+        else vis.add(BoardHash());
+        if(IsSolved()){
+            solution.add(GenerateString());
+            ShowBoard();
+            return;
+        }
+        for(int i = 0; i < BOARD_SIZE; i++){
+            for(int j = 0; j < BOARD_SIZE; j++){
+                Set<Integer> set = new HashSet<>(rowListOfSet.get(i).get(j));
+                if(set.size() > 1){
+                    CellState[][] recBoard = deepCopy(board);
+                    ArrayList<ArrayList<Set<Integer>>> recRowListOfSet = CopySetList(rowListOfSet);
+                    ArrayList<ArrayList<Set<Integer>>> recColListOfSet = CopySetList(colListOfSet);
+                    // record maps separately
+                    ArrayList<Map<Integer, Set<Integer>>> recRowListOfMapForward = CopyMapList(rowListOfMapForward);
+                    ArrayList<Map<Integer, Set<Integer>>> recColListOfMapForward = CopyMapList(colListOfMapForward);
+                    ArrayList<Map<Integer, Set<Integer>>> recRowListOfMapBackward = CopyMapList(rowListOfMapBackward);
+                    ArrayList<Map<Integer, Set<Integer>>> recColListOfMapBackward = CopyMapList(colListOfMapBackward);
+
+                    for(int k: set){
+                        rowListOfSet.get(i).get(j).clear();
+                        rowListOfSet.get(i).get(j).add(k);
+                        SolvePipeline();
+                        Guess();
+
+                        rowListOfSet = recRowListOfSet;
+                        colListOfSet = recColListOfSet;
+
+                        rowListOfMapForward = recRowListOfMapForward;
+                        colListOfMapForward = recColListOfMapForward;
+                        rowListOfMapBackward = recRowListOfMapBackward;
+                        colListOfMapBackward = recColListOfMapBackward;
+
+                        board = recBoard;
+
+                    }
+                }
+            }
         }
     }
 
