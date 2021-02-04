@@ -7,9 +7,9 @@ A nonogram generater and solver， generate hint from image or solve game provid
 
 **User interface is not added yet, so run it from command line with options below:**
 
-`-s` 		solve mode, enter board size `n` and hint (n*n square board)
+`-s` 		solve mode, enter board size `n` (n*n square board) and `hint `
 
-`-g` 		generate mode, enter image path
+`-g` 		generate mode, enter image `path`
 
 
 
@@ -17,7 +17,7 @@ A nonogram generater and solver， generate hint from image or solve game provid
 
 - ### Generate game from image:
 
-  <img src="./media/einstein.jpg" style="zoom:26%;" />        <img src="./media/einstein_game2.jpg" style="zoom:40%;" />
+<img src="./media/einstein.jpg" alt="drawing" width = "200" />        <img src="./media/einstein_game2.jpg" alt="drawing" width = "200" />
 
   hint will be printed.
 
@@ -39,16 +39,7 @@ Col hint:
 
 Solved:
 
-**solution1:** 0101101001011010
-⬜⬛⬜⬛
-⬛⬜⬛⬜
-⬜⬛⬜⬛
-⬛⬜⬛⬜
-**solution2:** 1010010110100101
-⬛⬜⬛⬜
-⬜⬛⬜⬛
-⬛⬜⬛⬜
-⬜⬛⬜⬛
+![](./media/solved.JPG)
 
 
 
