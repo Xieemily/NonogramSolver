@@ -4,6 +4,7 @@ import javax.swing.text.StyledEditorKit;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class GameState {
     static int BOARD_SIZE;
@@ -16,10 +17,27 @@ public class GameState {
 
     CellState[][] board;
 
-    ArrayList<ArrayList<Integer>> hintRow = new ArrayList<>();
-    ArrayList<ArrayList<Integer>> hintCol = new ArrayList<>();
+    List<List<Integer>> hintRow = new ArrayList<>();
+    List<List<Integer>> hintCol = new ArrayList<>();
 
-    GameState(ArrayList<ArrayList<Integer>> _hintRow, ArrayList<ArrayList<Integer>> _hintCol, int _gameSize) {
+    /**
+     * For test
+     */
+    GameState(int _gameSize){
+        BOARD_SIZE = _gameSize;
+        board = new CellState[BOARD_SIZE][BOARD_SIZE];
+        for (int i = 0; i < BOARD_SIZE; i++)
+            for (int j = 0; j < BOARD_SIZE; j++)
+                board[i][j] = CellState.UNKNOWN;
+    }
+
+    /**
+     * Generate game from hint
+     * @param _hintRow list of list of hint
+     * @param _hintCol list of list of hint
+     * @param _gameSize board length, assume board is square
+     */
+    GameState(List<List<Integer>> _hintRow, List<List<Integer>> _hintCol, int _gameSize) {
         BOARD_SIZE = _gameSize;
         hintRow = _hintRow;
         hintCol = _hintCol;
@@ -29,6 +47,12 @@ public class GameState {
                 board[i][j] = CellState.UNKNOWN;
     }
 
+    /**
+     * Generate game when image is specified, hint is generated
+     * @param path image path
+     * @param _gameSize board length, assume board is square
+     * @throws IOException input error
+     */
     GameState(String path, int _gameSize) throws IOException {
         BOARD_SIZE = _gameSize;
         board = new CellState[BOARD_SIZE][BOARD_SIZE];
@@ -53,20 +77,16 @@ public class GameState {
         board[x][y] = state;
     }
 
-    public CellState getBoard(int x, int y) {
-        return board[x][y];
-    }
-
     void ShowBoard() {
         for (int i = 0; i < BOARD_SIZE; i++) {
             // print value of i th row
             for (int j = 0; j < BOARD_SIZE; j++) {
                 if (board[i][j] == CellState.FILLED)
-                    System.out.print(" x ");
+                    System.out.print("\u2B1B");
                 else if (board[i][j] == CellState.EMPTY)
-                    System.out.print("   ");
+                    System.out.print("\u2B1C");
                 else
-                    System.out.print(" ? ");
+                    System.out.print("\u2B50");
             }
             System.out.println();
             // print horizontal line
@@ -75,6 +95,10 @@ public class GameState {
         }
     }
 
+    /**
+     * Check whether the game is solved or not
+     * @return bool, ture for solved
+     */
     public Boolean IsSolved(){
         for(int i = 0; i < BOARD_SIZE; i++){
             for(int j = 0; j < BOARD_SIZE; j++){
@@ -85,6 +109,11 @@ public class GameState {
         return Boolean.TRUE;
     }
 
+    /**
+     * Generate board from image by calling image process class method
+     * @param path image path
+     * @throws IOException error read
+     */
     private void GenerateGameFromImg(String path) throws IOException {
         ImgProcess imgProcess = new ImgProcess();
         imgProcess.ProcessImage(path, BOARD_SIZE);
@@ -100,11 +129,14 @@ public class GameState {
 
     }
 
+    /**
+     * Generate hint from board, used when image input available
+     */
     private void GenerateHint() {
-        int cnt = 0; // count continuous filled cells
+        int cnt = 0; // counter for continuous filled cells
         // row
         for (CellState[] cellStates : board) {
-            ArrayList<Integer> arrayList = new ArrayList<>();
+            List<Integer> arrayList = new ArrayList<>();
             for (int j = 0; j < board.length; j++) {
                 if (cellStates[j] == CellState.FILLED) {
                     cnt++; // count continuous cells
@@ -120,7 +152,7 @@ public class GameState {
             hintRow.add(arrayList);
         } // end for
         cnt = 0;
-        // column
+        // column, same as above
         for (int i = 0; i < board.length; i++) {
             ArrayList<Integer> arrayList = new ArrayList<>();
             for (int j = 0; j < board.length; j++) {

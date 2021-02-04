@@ -1,38 +1,46 @@
 package com.nonogram;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.util.*;
 
 class SolveGame extends GameState {
     private final Solver solver = new Solver();
     // record sets of possible labels separately
-    private ArrayList<ArrayList<Set<Integer>>> rowListOfSet = new ArrayList<>();
-    private ArrayList<ArrayList<Set<Integer>>> colListOfSet = new ArrayList<>();
+    private List<List<Set<Integer>>> rowListOfSet = new ArrayList<>();
+    private List<List<Set<Integer>>> colListOfSet = new ArrayList<>();
     // record maps separately
-    private ArrayList<Map<Integer, Set<Integer>>> rowListOfMapForward = new ArrayList<>();
-    private ArrayList<Map<Integer, Set<Integer>>> colListOfMapForward = new ArrayList<>();
-    private ArrayList<Map<Integer, Set<Integer>>> rowListOfMapBackward = new ArrayList<>();
-    private ArrayList<Map<Integer, Set<Integer>>> colListOfMapBackward = new ArrayList<>();
+    private List<Map<Integer, Set<Integer>>> rowListOfMapForward = new ArrayList<>();
+    private List<Map<Integer, Set<Integer>>> colListOfMapForward = new ArrayList<>();
+    private List<Map<Integer, Set<Integer>>> rowListOfMapBackward = new ArrayList<>();
+    private List<Map<Integer, Set<Integer>>> colListOfMapBackward = new ArrayList<>();
     // record visited board hash
     Set<Integer> vis = new HashSet<>();
     // record solution
     ArrayList<String> solution = new ArrayList<>();
+    int numSolution = 0;
+    int SOLUTION_NEED = 50;
 
-    SolveGame(ArrayList<ArrayList<Integer>> _hintRow, ArrayList<ArrayList<Integer>> _hintCol, int _gameSize) {
+    SolveGame(List<List<Integer>> _hintRow, List<List<Integer>> _hintCol,
+              int _gameSize) {
         super(_hintRow, _hintCol, _gameSize);
         InitBoardState();
+    }
+
+    public void SetSolutionNeed(int need){
+        SOLUTION_NEED = need;
     }
 
     /**
      * Initialize possible label sets and maps of board with solver using hints
      */
     private void InitBoardState() {
-        for (ArrayList<Integer> hint : hintRow) {
+        for (List<Integer> hint : hintRow) {
             rowListOfSet.add(solver.InitLine(hint));
             rowListOfMapForward.add(solver.GenerateMap(hint, 1));
             rowListOfMapBackward.add(solver.GenerateMap(hint, -1));
         }
-        for (ArrayList<Integer> hint : hintCol) {
+        for (List<Integer> hint : hintCol) {
             colListOfSet.add(solver.InitLine(hint));
             colListOfMapForward.add(solver.GenerateMap(hint, 1));
             colListOfMapBackward.add(solver.GenerateMap(hint, -1));
@@ -46,7 +54,7 @@ class SolveGame extends GameState {
      * @param lineNo  line no to be deducted, set corresponding board state by it
      * @param isRow   Boolean indicates row or column line set is passed
      */
-    private void DeductLine(ArrayList<Set<Integer>> setLine, int lineNo, Boolean isRow) {
+    private void DeductLine(List<Set<Integer>> setLine, int lineNo, Boolean isRow) {
         for (int i = 0; i < setLine.size(); i++) { // iterate cells in line
             // if cell is determined, skip it
             if ((isRow && board[lineNo][i] != CellState.UNKNOWN)
@@ -153,8 +161,8 @@ class SolveGame extends GameState {
      * Deep copy sets of board
      * @return Copied list of list of set
      */
-    ArrayList<ArrayList<Set<Integer>>> CopySetList(ArrayList<ArrayList<Set<Integer>>> list){
-        ArrayList<ArrayList<Set<Integer>>> copied = new ArrayList<>();
+    List<List<Set<Integer>>> CopySetList(List<List<Set<Integer>>> list){
+        List<List<Set<Integer>>> copied = new ArrayList<>();
         for(int i = 0; i < BOARD_SIZE; i++){
             ArrayList<Set<Integer>> listInner = new ArrayList<>();
             for(int j = 0; j < BOARD_SIZE; j++){
@@ -167,60 +175,62 @@ class SolveGame extends GameState {
     }
 
     /**
-     * Deep copy maps of board
-     * @param list map list of board
-     * @return copied list
+     * Check whether the game is not solvable
+     * @return bool, ture for unsolvable
      */
-    ArrayList<Map<Integer, Set<Integer>>> CopyMapList(ArrayList<Map<Integer, Set<Integer>>> list){
-        ArrayList<Map<Integer, Set<Integer>>> copied = new ArrayList<>();
+    public Boolean ErrorState(){
         for(int i = 0; i < BOARD_SIZE; i++){
-            Map<Integer, Set<Integer>> map= new HashMap<>();
-            for(Map.Entry<Integer, Set<Integer>> entry:list.get(i).entrySet()){
-                Set<Integer> copiedSet = new HashSet<>(entry.getValue());
-                map.put(entry.getKey(), copiedSet);
+            for(int j = 0; j < BOARD_SIZE; j++){
+                if(rowListOfSet.get(i).get(j).isEmpty() || colListOfSet.get(i).get(j).isEmpty())
+                    return Boolean.TRUE;
             }
-            copied.add(map);
         }
-        return copied;
+        return Boolean.FALSE;
     }
 
     /**
      * For game with multiple solutions, guess is needed, use dfs search
      */
     public void Guess(){
-        if(vis.contains(BoardHash()))return;
-        else vis.add(BoardHash());
+        if(vis.contains(BoardHash())){ // board occurred
+            return;
+        } else {
+            vis.add(BoardHash()); // mark board as visited
+        }
         if(IsSolved()){
-            solution.add(GenerateString());
+            numSolution ++;
+            String s = GenerateString();
+            System.out.println("solution" + numSolution + ":" + s);
+            solution.add(s); // record solution by string representation
             ShowBoard();
             return;
         }
+        // find unknown cells
         for(int i = 0; i < BOARD_SIZE; i++){
             for(int j = 0; j < BOARD_SIZE; j++){
                 Set<Integer> set = new HashSet<>(rowListOfSet.get(i).get(j));
                 if(set.size() > 1){
+                    // store current state
                     CellState[][] recBoard = deepCopy(board);
-                    ArrayList<ArrayList<Set<Integer>>> recRowListOfSet = CopySetList(rowListOfSet);
-                    ArrayList<ArrayList<Set<Integer>>> recColListOfSet = CopySetList(colListOfSet);
-                    // record maps separately
-                    ArrayList<Map<Integer, Set<Integer>>> recRowListOfMapForward = CopyMapList(rowListOfMapForward);
-                    ArrayList<Map<Integer, Set<Integer>>> recColListOfMapForward = CopyMapList(colListOfMapForward);
-                    ArrayList<Map<Integer, Set<Integer>>> recRowListOfMapBackward = CopyMapList(rowListOfMapBackward);
-                    ArrayList<Map<Integer, Set<Integer>>> recColListOfMapBackward = CopyMapList(colListOfMapBackward);
+                    List<List<Set<Integer>>> recRowListOfSet = CopySetList(rowListOfSet);
+                    List<List<Set<Integer>>> recColListOfSet = CopySetList(colListOfSet);
 
+                    // loop possible value of one cell
                     for(int k: set){
                         rowListOfSet.get(i).get(j).clear();
                         rowListOfSet.get(i).get(j).add(k);
                         SolvePipeline();
-                        Guess();
+                        Guess(); // recursive call
 
+                        // there might be hundreds of solutions, comment it if want to find them all
+                        // it can be time consuming, make sure the amount of solution is limited
+                        // 50(default) solution is enough for most cases
+                        if(numSolution >= SOLUTION_NEED)return;
+
+
+                        // drop changed lists and rollback, let garbage collector do the job
                         rowListOfSet = recRowListOfSet;
                         colListOfSet = recColListOfSet;
-
-                        rowListOfMapForward = recRowListOfMapForward;
-                        colListOfMapForward = recColListOfMapForward;
-                        rowListOfMapBackward = recRowListOfMapBackward;
-                        colListOfMapBackward = recColListOfMapBackward;
 
                         board = recBoard;
 

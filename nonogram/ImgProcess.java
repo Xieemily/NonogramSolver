@@ -19,13 +19,9 @@ class ImgProcess {
      * @param _gameSize specify board length
      */
     public void ProcessImage(String path, int _gameSize) throws IOException {
-        BufferedImage srcImg = null;
+        BufferedImage srcImg;
         IMG_SIZE = _gameSize;
-        try {
-            srcImg = ImageIO.read(new File(path));
-        } catch (IOException e) {
-            System.out.println("Error read: " + e);
-        }
+        srcImg = ImageIO.read(new File(path));
         img = ConvertToBinary(ResizeImage(srcImg, IMG_SIZE, IMG_SIZE));
     }
 
@@ -51,7 +47,7 @@ class ImgProcess {
                     int b = (0x000000ff & val);
                     int m = (r + g + b);
                     // (255+255+255)/2 =283 middle of intensity
-                    if (m >= 283) {
+                    if (m >= 383) {
                         // for light color, set white
                         binaryImg.setRGB(i, j, Color.WHITE.getRGB());
                     } else {
@@ -67,6 +63,13 @@ class ImgProcess {
         return binaryImg;
     }
 
+    /**
+     * Resize image to desired size
+     * @param originalImage original image
+     * @param targetWidth target width(px)
+     * @param targetHeight target height(px)
+     * @return resized image
+     */
     private BufferedImage ResizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
         BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = resizedImage.createGraphics();
@@ -75,17 +78,17 @@ class ImgProcess {
         return resizedImage;
     }
 
-    public void DisplayImage(BufferedImage img) {
-        ImageIcon icon = new ImageIcon(img);
-        JFrame frame = new JFrame();
-        frame.setLayout(new FlowLayout());
-        frame.setSize(200, 300);
-        JLabel lbl = new JLabel();
-        lbl.setIcon(icon);
-        frame.add(lbl);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
+//    public void DisplayImage(BufferedImage img) {
+//        ImageIcon icon = new ImageIcon(img);
+//        JFrame frame = new JFrame();
+//        frame.setLayout(new FlowLayout());
+//        frame.setSize(200, 300);
+//        JLabel lbl = new JLabel();
+//        lbl.setIcon(icon);
+//        frame.add(lbl);
+//        frame.setVisible(true);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//    }
 
 
 }

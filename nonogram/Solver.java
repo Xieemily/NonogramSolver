@@ -13,8 +13,8 @@ class Solver {
      * @param hint hint list of one line
      * @return labeling
      */
-    public ArrayList<Integer> GenerateLabeling(ArrayList<Integer> hint) {
-        ArrayList<Integer> labeling = new ArrayList<>();
+    public List<Integer> GenerateLabeling(List<Integer> hint) {
+        List<Integer> labeling = new ArrayList<>();
         // empty line
         if (hint.isEmpty()) {
             labeling.add(-1);
@@ -46,8 +46,8 @@ class Solver {
      * @param hint hint list of one line
      * @return labeling
      */
-    private ArrayList<Integer> GenerateSingleLabeling(ArrayList<Integer> hint) {
-        ArrayList<Integer> labeling = new ArrayList<>();
+    private List<Integer> GenerateSingleLabeling(List<Integer> hint) {
+        List<Integer> labeling = new ArrayList<>();
         // empty line
         if (hint.isEmpty()) {
             labeling.add(-1);
@@ -78,8 +78,8 @@ class Solver {
      * @return map
      * a map indicate what number can appear after/before cell n
      */
-    public Map<Integer, Set<Integer>> GenerateMap(ArrayList<Integer> hint, int shift) {
-        ArrayList<Integer> labeling = GenerateLabeling(hint);
+    public Map<Integer, Set<Integer>> GenerateMap(List<Integer> hint, int shift) {
+        List<Integer> labeling = GenerateLabeling(hint);
         Map<Integer, Set<Integer>> map = new HashMap<>();
         for (int i = 0; i < labeling.size(); i++) {
             int tmp_label = labeling.get(i);
@@ -109,9 +109,9 @@ class Solver {
      * @return lineSet
      * a list of sets, each set contains the labels that could appear in one cell
      */
-    public ArrayList<Set<Integer>> InitLine(ArrayList<Integer> hint) {
-        ArrayList<Integer> labeling = GenerateSingleLabeling(hint);
-        ArrayList<Set<Integer>> lineSet = new ArrayList<>();
+    public List<Set<Integer>> InitLine(List<Integer> hint) {
+        List<Integer> labeling = GenerateSingleLabeling(hint);
+        List<Set<Integer>> lineSet = new ArrayList<>();
         // calculate length of block
         int sumBlock = 0;
         for (int i : hint) sumBlock += i;
@@ -149,7 +149,7 @@ class Solver {
      * @return lineSet
      * list of sets after forward pass, each set contains the labels that could appear in one cell
      */
-    public ArrayList<Set<Integer>> ForwardPass(ArrayList<Set<Integer>> lineSet, Map<Integer, Set<Integer>> map) {
+    public List<Set<Integer>> ForwardPass(List<Set<Integer>> lineSet, Map<Integer, Set<Integer>> map) {
         Set<Integer> available = new HashSet<>();
         for (Set<Integer> set : lineSet) {
             if (!available.isEmpty()) { // not first one
@@ -172,7 +172,7 @@ class Solver {
      * @return lineSet
      * list of sets after forward pass, each set contains the labels that could appear in one cell
      */
-    public ArrayList<Set<Integer>> BackwardPass(ArrayList<Set<Integer>> lineSet, Map<Integer, Set<Integer>> map) {
+    public List<Set<Integer>> BackwardPass(List<Set<Integer>> lineSet, Map<Integer, Set<Integer>> map) {
         Collections.reverse(lineSet); // reverse line
         Set<Integer> available = new HashSet<>();
         for (Set<Integer> set : lineSet) {
