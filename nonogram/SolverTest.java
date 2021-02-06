@@ -1,4 +1,5 @@
 package com.nonogram;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -6,15 +7,15 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SolverTest {
-    GameState state = new GameState(10);
+    GameState state = new GameState(10,10);
     private final Solver solver= new Solver();
 
     // covers hint = [1]
     @Test
     void TestLabeling1(){
         List<Integer> hint = new ArrayList<>();
-        hint = Arrays.asList(1);
-        List<Integer> labeling = new ArrayList<>();
+        hint.add(1);
+        List<Integer> labeling;
         labeling = Arrays.asList(-1,-1,2,-3,-3);
         assertEquals(labeling, solver.GenerateLabeling(hint));
     }
@@ -23,8 +24,8 @@ class SolverTest {
     @Test
     void TestLabeling(){
 
-        List<Integer> hint = new ArrayList<>();
-        List<Integer> arr = new ArrayList<>();
+        List<Integer> hint;
+        List<Integer> arr;
         hint = Arrays.asList(2, 1);
         arr = Arrays.asList(-1, -1, 2, 3, -4, -4, 5, -6, -6);
         assertEquals(arr, solver.GenerateLabeling(hint), "Labeling");
@@ -34,7 +35,7 @@ class SolverTest {
     // map {-1=[-1], 2=[-1], 3=[2], 4=[3], -5=[4, -5], 6=[-5], 7=[6], 8=[7], 9=[8], -10=[9, -10]}
     @Test
     void TestGenerateMapPrevious(){
-        List<Integer> hint = new ArrayList<>();
+        List<Integer> hint;
         hint = Arrays.asList(3, 4);
         System.out.println(solver.GenerateMap(hint, -1));
     }
@@ -43,7 +44,7 @@ class SolverTest {
     // map {-1=[-1, 2], 2=[3], 3=[4], 4=[-5], -5=[-5, 6], 6=[7], 7=[8], 8=[9], 9=[-10], -10=[-10]}
     @Test
     void TestGenerateMapFront(){
-        List<Integer> hint = new ArrayList<>();
+        List<Integer> hint;
         hint = Arrays.asList(3, 4);
         System.out.println(solver.GenerateMap(hint, 1));
     }
@@ -53,14 +54,14 @@ class SolverTest {
     void TestInitLine(){
         ArrayList<Integer> hint = new ArrayList<>();
         hint.add(2); hint.add(7);
-        System.out.println(solver.InitLine(hint));
+        System.out.println(solver.InitLine(hint, Boolean.TRUE));
     }
 
     // covers hint = []
     @Test
     void TestInitLineEmpty(){
         ArrayList<Integer> hint = new ArrayList<>();
-        System.out.println(solver.InitLine(hint));
+        System.out.println(solver.InitLine(hint, Boolean.FALSE));
     }
 
     // covers hint = [1]
@@ -68,7 +69,7 @@ class SolverTest {
     void TestInitLineOne(){
         ArrayList<Integer> hint = new ArrayList<>();
         hint.add(1);
-        System.out.println(solver.InitLine(hint));
+        System.out.println(solver.InitLine(hint, Boolean.TRUE));
     }
 
     // covers hint = [10]
@@ -76,17 +77,17 @@ class SolverTest {
     void TestInitLineFull(){
         ArrayList<Integer> hint = new ArrayList<>();
         hint.add(10);
-        System.out.println(solver.InitLine(hint));
+        System.out.println(solver.InitLine(hint, Boolean.FALSE));
     }
 
     // covers hint = [1]
     @Test
     void forwardPassOne() {
         List<Integer> hint = new ArrayList<>();
-        hint = Arrays.asList(1);
+        hint.add(1);
         List<Integer> labeling = solver.GenerateLabeling(hint);
         System.out.println(labeling);
-        List<Set<Integer>> lineSet = solver.InitLine(hint);
+        List<Set<Integer>> lineSet = solver.InitLine(hint, Boolean.TRUE);
         System.out.println(lineSet);
         Map<Integer, Set<Integer>> map = solver.GenerateMap(hint, 1);
         System.out.println(map);
@@ -101,7 +102,7 @@ class SolverTest {
         hint.add(3);
         hint.add(4);
         List<Integer> labeling = solver.GenerateLabeling(hint);
-        List<Set<Integer>> lineSet = solver.InitLine(hint);
+        List<Set<Integer>> lineSet = solver.InitLine(hint, Boolean.FALSE);
         System.out.println(lineSet);
         Map<Integer, Set<Integer>> map = solver.GenerateMap(labeling, 1);
         System.out.println(map);
@@ -116,7 +117,7 @@ class SolverTest {
         hint.add(3);
         hint.add(4);
         List<Integer> labeling = solver.GenerateLabeling(hint);
-        List<Set<Integer>> lineSet = solver.InitLine(hint);
+        List<Set<Integer>> lineSet = solver.InitLine(hint, Boolean.FALSE);
         System.out.println(lineSet);
         Map<Integer, Set<Integer>> map = solver.GenerateMap(labeling, -1);
         System.out.println(map);

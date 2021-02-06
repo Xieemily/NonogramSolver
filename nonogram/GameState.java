@@ -1,13 +1,13 @@
 package com.nonogram;
 
-import javax.swing.text.StyledEditorKit;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class GameState {
-    static int BOARD_SIZE;
+    static int BOARD_SIZE_ROW;
+    static int BOARD_SIZE_COL;
 
     enum CellState {
         FILLED,
@@ -23,11 +23,12 @@ public class GameState {
     /**
      * For test
      */
-    GameState(int _gameSize){
-        BOARD_SIZE = _gameSize;
-        board = new CellState[BOARD_SIZE][BOARD_SIZE];
-        for (int i = 0; i < BOARD_SIZE; i++)
-            for (int j = 0; j < BOARD_SIZE; j++)
+    GameState(int _gameSizeRow, int _gameSizeCol){
+        BOARD_SIZE_ROW = _gameSizeRow;
+        BOARD_SIZE_COL = _gameSizeCol;
+        board = new CellState[BOARD_SIZE_ROW][BOARD_SIZE_COL];
+        for (int i = 0; i < BOARD_SIZE_ROW; i++)
+            for (int j = 0; j < BOARD_SIZE_COL; j++)
                 board[i][j] = CellState.UNKNOWN;
     }
 
@@ -35,63 +36,62 @@ public class GameState {
      * Generate game from hint
      * @param _hintRow list of list of hint
      * @param _hintCol list of list of hint
-     * @param _gameSize board length, assume board is square
+     * @param _gameSizeRow board row length
+     * @param _gameSizeCol board col length
      */
-    GameState(List<List<Integer>> _hintRow, List<List<Integer>> _hintCol, int _gameSize) {
-        BOARD_SIZE = _gameSize;
+    GameState(List<List<Integer>> _hintRow, List<List<Integer>> _hintCol,
+              int _gameSizeRow, int _gameSizeCol) {
+        BOARD_SIZE_ROW = _gameSizeRow;
+        BOARD_SIZE_COL = _gameSizeCol;
         hintRow = _hintRow;
         hintCol = _hintCol;
-        board = new CellState[BOARD_SIZE][BOARD_SIZE];
-        for (int i = 0; i < BOARD_SIZE; i++)
-            for (int j = 0; j < BOARD_SIZE; j++)
+        board = new CellState[BOARD_SIZE_ROW][BOARD_SIZE_COL];
+        for (int i = 0; i < BOARD_SIZE_ROW; i++)
+            for (int j = 0; j < BOARD_SIZE_COL; j++)
                 board[i][j] = CellState.UNKNOWN;
     }
 
     /**
      * Generate game when image is specified, hint is generated
      * @param path image path
-     * @param _gameSize board length, assume board is square
+     * @param _gameSizeRow board length y
+     * @param _gameSizeCol board length x
      * @throws IOException input error
      */
-    GameState(String path, int _gameSize) throws IOException {
-        BOARD_SIZE = _gameSize;
-        board = new CellState[BOARD_SIZE][BOARD_SIZE];
+    GameState(String path, int _gameSizeRow, int _gameSizeCol) throws IOException {
+        BOARD_SIZE_ROW = _gameSizeRow;
+        BOARD_SIZE_COL = _gameSizeCol;
+        board = new CellState[BOARD_SIZE_ROW][BOARD_SIZE_COL];
         GenerateGameFromImg(path);
         GenerateHint();
     }
 
-
-    void Move(int x, int y) {
-        board[x][y] = CellState.FILLED;
+    public static int getBoardSizeRow() {
+        return BOARD_SIZE_ROW;
     }
 
-    void Remove(int x, int y) {
-        board[x][y] = CellState.EMPTY;
-    }
-
-    public static int getBoardSize() {
-        return BOARD_SIZE;
-    }
+    public static int getBoardSizeCol(){return BOARD_SIZE_COL;}
 
     public void setBoard(CellState state, int x, int y) {
         board[x][y] = state;
     }
 
     void ShowBoard() {
-        for (int i = 0; i < BOARD_SIZE; i++) {
+        // output pretty square symbol if possible by change to the following utf-8 code
+        // String[] utf = {"\u2B1B", "\u2B1C", "\u2B50"};
+
+        // output "x" as default
+        for (int i = 0; i < BOARD_SIZE_ROW; i++) {
             // print value of i th row
-            for (int j = 0; j < BOARD_SIZE; j++) {
+            for (int j = 0; j < BOARD_SIZE_COL; j++) {
                 if (board[i][j] == CellState.FILLED)
-                    System.out.print("\u2B1B");
+                    System.out.print("x "); // utf[0]
                 else if (board[i][j] == CellState.EMPTY)
-                    System.out.print("\u2B1C");
+                    System.out.print("  "); // utf[1]
                 else
-                    System.out.print("\u2B50");
+                    System.out.print("? "); // utf[2]
             }
             System.out.println();
-            // print horizontal line
-//            for (int j = 0; j < BOARD_SIZE; j++) System.out.print("---+");
-//            System.out.println();
         }
     }
 
@@ -100,8 +100,8 @@ public class GameState {
      * @return bool, ture for solved
      */
     public Boolean IsSolved(){
-        for(int i = 0; i < BOARD_SIZE; i++){
-            for(int j = 0; j < BOARD_SIZE; j++){
+        for(int i = 0; i < BOARD_SIZE_ROW; i++){
+            for(int j = 0; j < BOARD_SIZE_COL; j++){
                 if(board[i][j] == CellState.UNKNOWN)
                     return Boolean.FALSE;
             }
@@ -116,11 +116,11 @@ public class GameState {
      */
     private void GenerateGameFromImg(String path) throws IOException {
         ImgProcess imgProcess = new ImgProcess();
-        imgProcess.ProcessImage(path, BOARD_SIZE);
+        imgProcess.ProcessImage(path, BOARD_SIZE_ROW, BOARD_SIZE_COL);
 
         // copy processed image array to board
-        for (int i = 0; i < board.length; i++)
-            for (int j = 0; j < board.length; j++) {
+        for (int i = 0; i < GameState.getBoardSizeRow(); i++)
+            for (int j = 0; j < GameState.getBoardSizeCol(); j++) {
                 if (imgProcess.rec[i][j] == 1) {
                     board[i][j] = CellState.FILLED;
                 } else
@@ -137,10 +137,10 @@ public class GameState {
         // row
         for (CellState[] cellStates : board) {
             List<Integer> arrayList = new ArrayList<>();
-            for (int j = 0; j < board.length; j++) {
+            for (int j = 0; j < GameState.getBoardSizeCol(); j++) {
                 if (cellStates[j] == CellState.FILLED) {
                     cnt++; // count continuous cells
-                    if (j == board.length - 1) {
+                    if (j == GameState.getBoardSizeCol() - 1) {
                         arrayList.add(cnt); // last cell is filled, store cnt
                         cnt = 0;
                     }
@@ -153,12 +153,12 @@ public class GameState {
         } // end for
         cnt = 0;
         // column, same as above
-        for (int i = 0; i < board.length; i++) {
+        for (int i = 0; i < GameState.getBoardSizeCol(); i++) {
             ArrayList<Integer> arrayList = new ArrayList<>();
-            for (int j = 0; j < board.length; j++) {
+            for (int j = 0; j < GameState.getBoardSizeRow(); j++) {
                 if (board[j][i] == CellState.FILLED) {
                     cnt++;
-                    if (j == board.length - 1) {
+                    if (j == GameState.getBoardSizeRow() - 1) {
                         arrayList.add(cnt); // last cell
                         cnt = 0;
                     }
@@ -176,18 +176,18 @@ public class GameState {
      * @return string of board state
      */
     String GenerateString(){
-        String str = new String();
-        for(int i = 0; i < BOARD_SIZE; i++){
-            for(int j = 0; j < BOARD_SIZE; j++){
+        StringBuilder str = new StringBuilder();
+        for(int i = 0; i < BOARD_SIZE_ROW; i++){
+            for(int j = 0; j < BOARD_SIZE_COL; j++){
                 if(board[i][j] == CellState.UNKNOWN)
-                    str += 2;
+                    str.append(2);
                 else if(board[i][j] == CellState.FILLED)
-                    str += 1;
+                    str.append(1);
                 else
-                    str += 0;
+                    str.append(0);
             }
         }
-        return str;
+        return str.toString();
     }
 
     /**

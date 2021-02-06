@@ -1,28 +1,27 @@
 package com.nonogram;
 
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
+import com.nonogram.GameState;
+import org.junit.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class GameStateTest {
+public class GameStateTest {
 
     // unknown board
     @Test
-    void GenerateStringUnknownTest(){
+    public void GenerateStringUnknownTest(){
         String str = "2222";
-        GameState state = new GameState(2);
+        GameState state = new GameState(2, 2);
         assertEquals(str, state.GenerateString());
     }
 
     // empty board
     @Test
-    void GenerateStringEmptyTest(){
+    public void GenerateStringEmptyTest(){
         String str = "0000";
-        GameState state = new GameState(2);
-        for(int i = 0; i < state.getBoardSize(); i++){
-            for(int j = 0; j < state.getBoardSize(); j++){
+        GameState state = new GameState(2, 2);
+        for(int i = 0; i < GameState.getBoardSizeRow(); i++){
+            for(int j = 0; j < GameState.getBoardSizeCol(); j++){
                 state.setBoard(GameState.CellState.EMPTY, i, j);
             }
         }
@@ -31,11 +30,11 @@ class GameStateTest {
 
     // mixed board
     @Test
-    void GenerateStringMixedTest(){
+    public void GenerateStringMixedTest(){
         String str = new String("200000100");
-        GameState state = new GameState(3);
-        for(int i = 0; i < state.getBoardSize(); i++){
-            for(int j = 0; j < state.getBoardSize(); j++){
+        GameState state = new GameState(3, 3);
+        for(int i = 0; i < GameState.getBoardSizeRow(); i++){
+            for(int j = 0; j < GameState.getBoardSizeCol(); j++){
                 state.setBoard(GameState.CellState.EMPTY, i, j);
             }
         }

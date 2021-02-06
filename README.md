@@ -1,5 +1,5 @@
 # Nonogram
-A nonogram generater and solver， generate hint from image or solve game provided hint, all possible solutions can be found.（ongoing）
+A nonogram generator and solver， generate hint from image or solve game provided hint, all possible solutions can be found.（ongoing）
 
 
 
@@ -17,7 +17,7 @@ A nonogram generater and solver， generate hint from image or solve game provid
 
 - ### Generate game from image:
 
-<img src="./media/einstein.jpg" alt="drawing" width = "200" />        <img src="./media/einstein_game2.jpg" alt="drawing" width = "200" />
+<img src="./media/einstein.jpg" alt="drawing" width = "1127" />        <img src="./media/einstein_game2.jpg" alt="drawing" width = "786" />
 
   hint will be printed.
 

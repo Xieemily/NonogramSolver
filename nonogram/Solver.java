@@ -109,16 +109,23 @@ class Solver {
      * @return lineSet
      * a list of sets, each set contains the labels that could appear in one cell
      */
-    public List<Set<Integer>> InitLine(List<Integer> hint) {
+    public List<Set<Integer>> InitLine(List<Integer> hint, Boolean isRow) {
         List<Integer> labeling = GenerateSingleLabeling(hint);
         List<Set<Integer>> lineSet = new ArrayList<>();
         // calculate length of block
         int sumBlock = 0;
+        // board size
+        int boardLen;
+        if(isRow){
+                boardLen = GameState.getBoardSizeCol();
+        } else {
+            boardLen = GameState.getBoardSizeRow();
+        }
         for (int i : hint) sumBlock += i;
         // moves needed to get to right most position
-        int move = GameState.getBoardSize() - sumBlock - hint.size() + 1;
+        int move = boardLen - sumBlock - hint.size() + 1;
         // cell label in between
-        for (int cell = 0; cell < GameState.getBoardSize(); cell++) {
+        for (int cell = 0; cell < boardLen; cell++) {
             Set<Integer> cellSet = new HashSet<>();
             for (int i = 0; i <= move; i++) { // get value in between
                 // get label of shifted right most position
@@ -174,16 +181,7 @@ class Solver {
      */
     public List<Set<Integer>> BackwardPass(List<Set<Integer>> lineSet, Map<Integer, Set<Integer>> map) {
         Collections.reverse(lineSet); // reverse line
-        Set<Integer> available = new HashSet<>();
-        for (Set<Integer> set : lineSet) {
-            if (!available.isEmpty()) { // not first one
-                set.retainAll(available); // intersect with available label
-                available.clear();
-            }
-            for (int i : set) {
-                available.addAll(map.get(i)); // available labels of next cell
-            }
-        }
+        ForwardPass(lineSet, map);
         Collections.reverse(lineSet);
         return lineSet;
     }

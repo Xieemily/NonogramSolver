@@ -1,34 +1,28 @@
 package com.nonogram;
 
-import java.io.File;
-import java.lang.reflect.Array;
 import java.util.*;
 
-class SolveGame extends GameState {
+public class SolveGame extends GameState {
     private final Solver solver = new Solver();
     // record sets of possible labels separately
     private List<List<Set<Integer>>> rowListOfSet = new ArrayList<>();
     private List<List<Set<Integer>>> colListOfSet = new ArrayList<>();
     // record maps separately
-    private List<Map<Integer, Set<Integer>>> rowListOfMapForward = new ArrayList<>();
-    private List<Map<Integer, Set<Integer>>> colListOfMapForward = new ArrayList<>();
-    private List<Map<Integer, Set<Integer>>> rowListOfMapBackward = new ArrayList<>();
-    private List<Map<Integer, Set<Integer>>> colListOfMapBackward = new ArrayList<>();
+    private final List<Map<Integer, Set<Integer>>> rowListOfMapForward = new ArrayList<>();
+    private final List<Map<Integer, Set<Integer>>> colListOfMapForward = new ArrayList<>();
+    private final List<Map<Integer, Set<Integer>>> rowListOfMapBackward = new ArrayList<>();
+    private final List<Map<Integer, Set<Integer>>> colListOfMapBackward = new ArrayList<>();
     // record visited board hash
-    Set<Integer> vis = new HashSet<>();
+    final Set<Integer> vis = new HashSet<>();
     // record solution
-    ArrayList<String> solution = new ArrayList<>();
+    final ArrayList<String> solution = new ArrayList<>();
     int numSolution = 0;
     int SOLUTION_NEED = 50;
 
     SolveGame(List<List<Integer>> _hintRow, List<List<Integer>> _hintCol,
-              int _gameSize) {
-        super(_hintRow, _hintCol, _gameSize);
+              int _gameSizeRow, int _gameSizeCol) {
+        super(_hintRow, _hintCol, _gameSizeRow, _gameSizeCol);
         InitBoardState();
-    }
-
-    public void SetSolutionNeed(int need){
-        SOLUTION_NEED = need;
     }
 
     /**
@@ -36,12 +30,12 @@ class SolveGame extends GameState {
      */
     private void InitBoardState() {
         for (List<Integer> hint : hintRow) {
-            rowListOfSet.add(solver.InitLine(hint));
+            rowListOfSet.add(solver.InitLine(hint, Boolean.TRUE));
             rowListOfMapForward.add(solver.GenerateMap(hint, 1));
             rowListOfMapBackward.add(solver.GenerateMap(hint, -1));
         }
         for (List<Integer> hint : hintCol) {
-            colListOfSet.add(solver.InitLine(hint));
+            colListOfSet.add(solver.InitLine(hint, Boolean.FALSE));
             colListOfMapForward.add(solver.GenerateMap(hint, 1));
             colListOfMapBackward.add(solver.GenerateMap(hint, -1));
         }
@@ -91,9 +85,9 @@ class SolveGame extends GameState {
      * A boolean tells whether new info is gathered
      */
     private Boolean DeductLabel() {
-        Boolean changed = Boolean.FALSE;
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
+        boolean changed = Boolean.FALSE;
+        for (int i = 0; i < BOARD_SIZE_ROW; i++) {
+            for (int j = 0; j < BOARD_SIZE_COL; j++) {
                 if (board[i][j] == CellState.FILLED) {
                     if (rowListOfSet.get(i).get(j).removeIf(n -> n < 0) ||
                             colListOfSet.get(j).get(i).removeIf(n -> n < 0)) // remove negative
@@ -163,9 +157,9 @@ class SolveGame extends GameState {
      */
     List<List<Set<Integer>>> CopySetList(List<List<Set<Integer>>> list){
         List<List<Set<Integer>>> copied = new ArrayList<>();
-        for(int i = 0; i < BOARD_SIZE; i++){
+        for(int i = 0; i < list.size(); i++){
             ArrayList<Set<Integer>> listInner = new ArrayList<>();
-            for(int j = 0; j < BOARD_SIZE; j++){
+            for(int j = 0; j < list.get(0).size(); j++){
                 Set<Integer> set = new HashSet<>(list.get(i).get(j));
                 listInner.add(set);
             }
@@ -179,9 +173,9 @@ class SolveGame extends GameState {
      * @return bool, ture for unsolvable
      */
     public Boolean ErrorState(){
-        for(int i = 0; i < BOARD_SIZE; i++){
-            for(int j = 0; j < BOARD_SIZE; j++){
-                if(rowListOfSet.get(i).get(j).isEmpty() || colListOfSet.get(i).get(j).isEmpty())
+        for(int i = 0; i < BOARD_SIZE_ROW; i++){
+            for(int j = 0; j < BOARD_SIZE_COL; j++){
+                if(rowListOfSet.get(i).get(j).isEmpty() || colListOfSet.get(j).get(i).isEmpty())
                     return Boolean.TRUE;
             }
         }
@@ -200,14 +194,14 @@ class SolveGame extends GameState {
         if(IsSolved()){
             numSolution ++;
             String s = GenerateString();
-            System.out.println("solution" + numSolution + ":" + s);
+            System.out.println("solution " + numSolution + ":" + s);
             solution.add(s); // record solution by string representation
             ShowBoard();
             return;
         }
         // find unknown cells
-        for(int i = 0; i < BOARD_SIZE; i++){
-            for(int j = 0; j < BOARD_SIZE; j++){
+        for(int i = 0; i < BOARD_SIZE_ROW; i++){
+            for(int j = 0; j < BOARD_SIZE_COL; j++){
                 Set<Integer> set = new HashSet<>(rowListOfSet.get(i).get(j));
                 if(set.size() > 1){
                     // store current state
