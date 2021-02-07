@@ -2,7 +2,10 @@ package com.nonogram;
 
 import java.util.*;
 
-public class SolveGame extends GameState {
+/**
+ * Solve specific game from game state.
+ */
+class SolveGame extends GameState {
     private final Solver solver = new Solver();
     // record sets of possible labels separately
     private List<List<Set<Integer>>> rowListOfSet = new ArrayList<>();
@@ -17,7 +20,7 @@ public class SolveGame extends GameState {
     // record solution
     final ArrayList<String> solution = new ArrayList<>();
     int numSolution = 0;
-    int SOLUTION_NEED = 50;
+    final int SOLUTION_NEED = 50;
 
     SolveGame(List<List<Integer>> _hintRow, List<List<Integer>> _hintCol,
               int _gameSizeRow, int _gameSizeCol) {
@@ -157,10 +160,10 @@ public class SolveGame extends GameState {
      */
     List<List<Set<Integer>>> CopySetList(List<List<Set<Integer>>> list){
         List<List<Set<Integer>>> copied = new ArrayList<>();
-        for(int i = 0; i < list.size(); i++){
+        for (List<Set<Integer>> sets : list) {
             ArrayList<Set<Integer>> listInner = new ArrayList<>();
-            for(int j = 0; j < list.get(0).size(); j++){
-                Set<Integer> set = new HashSet<>(list.get(i).get(j));
+            for (int j = 0; j < list.get(0).size(); j++) {
+                Set<Integer> set = new HashSet<>(sets.get(j));
                 listInner.add(set);
             }
             copied.add(listInner);
@@ -169,7 +172,7 @@ public class SolveGame extends GameState {
     }
 
     /**
-     * Check whether the game is not solvable
+     * Check whether the game is not solvable, called after SolvePipeline().
      * @return bool, ture for unsolvable
      */
     public Boolean ErrorState(){
@@ -216,7 +219,7 @@ public class SolveGame extends GameState {
                         SolvePipeline();
                         Guess(); // recursive call
 
-                        // there might be hundreds of solutions, comment it if want to find them all
+                        // there might be hundreds of solutions, comment this line to find them all
                         // it can be time consuming, make sure the amount of solution is limited
                         // 50(default) solution is enough for most cases
                         if(numSolution >= SOLUTION_NEED)return;

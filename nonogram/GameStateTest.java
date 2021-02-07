@@ -31,7 +31,7 @@ public class GameStateTest {
     // mixed board
     @Test
     public void GenerateStringMixedTest(){
-        String str = new String("200000100");
+        String str = "200000100";
         GameState state = new GameState(3, 3);
         for(int i = 0; i < GameState.getBoardSizeRow(); i++){
             for(int j = 0; j < GameState.getBoardSizeCol(); j++){

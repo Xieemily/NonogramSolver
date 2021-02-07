@@ -1,13 +1,18 @@
 package com.nonogram;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Scanner;
 
-
-public class FileIO {
+/**
+ * File creation and write to file.
+ */
+class FileIO {
     private static String file;
+
+    /**
+     * Create output file.
+     * @param path output file path
+     */
     public static void CreateFile(String path) {
         try {
             File myObj = new File(path);
@@ -23,6 +28,10 @@ public class FileIO {
         }
     }
 
+    /**
+     * Write result to previous created output file.
+     * @param content content to be appended to file
+     */
     public static void WriteToFile(String content) {
         try {
             FileWriter myWriter = new FileWriter(file, true);

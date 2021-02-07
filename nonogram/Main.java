@@ -13,6 +13,11 @@ class Main {
     public static int BOARD_SIZE_ROW;
     public static int BOARD_SIZE_COL;
 
+    /**
+     * Input hint from file or command line.
+     * @param path specified hint file path, null if use cmd line
+     * @throws FileNotFoundException input file not found
+     */
     public static void InputHint(String path) throws FileNotFoundException {
         Scanner scanner;
 
@@ -42,8 +47,14 @@ class Main {
 
     }
 
-    private static void InputHintList(Scanner scanner, int boardSizeRow, List<List<Integer>> rowHint) {
-        for(int i = 0; i < boardSizeRow; i++){
+    /**
+     * Simplify row/column hint input process, called in method InputHint()
+     * @param scanner scanner
+     * @param boardSize hint list amount
+     * @param rowHint list of list hint
+     */
+    private static void InputHintList(Scanner scanner, int boardSize, List<List<Integer>> rowHint) {
+        for(int i = 0; i < boardSize; i++){
             String[] s = scanner.nextLine().split("[\\s|,]");
             List<Integer> numbers = new ArrayList<>();
             for(String c:s){
@@ -66,6 +77,12 @@ class Main {
         }
     }
 
+    /**
+     * Write generated hint to output file.
+     * @param path output file
+     * @param hintRow hint of rows
+     * @param hintCol hint of columns
+     */
     public static void WriteHint(String path, List<List<Integer>> hintRow,
                                  List<List<Integer>> hintCol){
         FileIO.CreateFile(path);
@@ -93,12 +110,12 @@ class Main {
         if(args.length == 0 || args.length > 3){
             System.out.println("""
                     -s [input file] [output file] solve puzzle from hint input
-                    -g [image file] [output file] generate puzzle from image
+                    -g [image file] [output file] generate hint from image
                     \s""");
             return;
         }
 
-        // solve puzzle by hint
+        // -s and -t mode, solve puzzle by hint
         if(args[0].equals("-s") || args[0].equals("-t")){
             // input hint
             String path;
@@ -110,9 +127,13 @@ class Main {
                 System.out.println("File not found!" + e);
                 return;
             }
-            // solve game with deterministic solver
+            // solve game with deterministic solver and clock
             SolveGame solveGame = new SolveGame(rowHint, colHint, BOARD_SIZE_ROW, BOARD_SIZE_COL);
+            long startTime = System.nanoTime();
             solveGame.SolvePipeline();
+            long endTime = System.nanoTime();
+            long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
+            System.out.println("deterministic solve completed in " + duration + "ms");
             // error hint
             if(solveGame.ErrorState()){
                 System.out.println("Error hint, not solvable");

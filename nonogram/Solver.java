@@ -2,6 +2,9 @@ package com.nonogram;
 
 import java.util.*;
 
+/**
+ * Process needed to solve the game.
+ */
 class Solver {
     /**
      * Generate labeling given hint of one line, in order to get map.
@@ -39,8 +42,8 @@ class Solver {
     /**
      * Generate labeling given hint of one line, in order to get map.
      * Use the same negative number for empty cells(since its length is changeable),
-     * continuous number for filled cells, this make labeling for filled cells fixed
-     * for example: hint[3,4], assume 10 cells each line
+     * continuous number for filled cells, this make labeling for filled cells fixed.
+     * For example: hint[3,4], assume 10 cells each line
      * labeling[-1, -1, 2, 3, 4, -5, -5, 6, 7, 8, 9, -10, -10]
      *
      * @param hint hint list of one line

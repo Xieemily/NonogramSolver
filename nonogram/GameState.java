@@ -5,25 +5,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class GameState {
+/**
+ * Record game state, construct by hints or image.
+ */
+class GameState {
     static int BOARD_SIZE_ROW;
     static int BOARD_SIZE_COL;
-
-    enum CellState {
-        FILLED,
-        EMPTY,
-        UNKNOWN
-    }
-
     CellState[][] board;
-
     List<List<Integer>> hintRow = new ArrayList<>();
     List<List<Integer>> hintCol = new ArrayList<>();
-
     /**
-     * For test
+     * For test. Should never be used.
      */
-    GameState(int _gameSizeRow, int _gameSizeCol){
+    public GameState(int _gameSizeRow, int _gameSizeCol) {
         BOARD_SIZE_ROW = _gameSizeRow;
         BOARD_SIZE_COL = _gameSizeCol;
         board = new CellState[BOARD_SIZE_ROW][BOARD_SIZE_COL];
@@ -33,13 +27,14 @@ public class GameState {
     }
 
     /**
-     * Generate game from hint
-     * @param _hintRow list of list of hint
-     * @param _hintCol list of list of hint
+     * Generate game from hint.
+     *
+     * @param _hintRow     list of list of hint
+     * @param _hintCol     list of list of hint
      * @param _gameSizeRow board row length
      * @param _gameSizeCol board col length
      */
-    GameState(List<List<Integer>> _hintRow, List<List<Integer>> _hintCol,
+    public GameState(List<List<Integer>> _hintRow, List<List<Integer>> _hintCol,
               int _gameSizeRow, int _gameSizeCol) {
         BOARD_SIZE_ROW = _gameSizeRow;
         BOARD_SIZE_COL = _gameSizeCol;
@@ -52,8 +47,9 @@ public class GameState {
     }
 
     /**
-     * Generate game when image is specified, hint is generated
-     * @param path image path
+     * Generate game when image is specified, hint is generated.
+     *
+     * @param path         image path
      * @param _gameSizeRow board length y
      * @param _gameSizeCol board length x
      * @throws IOException input error
@@ -70,7 +66,9 @@ public class GameState {
         return BOARD_SIZE_ROW;
     }
 
-    public static int getBoardSizeCol(){return BOARD_SIZE_COL;}
+    public static int getBoardSizeCol() {
+        return BOARD_SIZE_COL;
+    }
 
     public void setBoard(CellState state, int x, int y) {
         board[x][y] = state;
@@ -78,31 +76,32 @@ public class GameState {
 
     void ShowBoard() {
         // output pretty square symbol if possible by change to the following utf-8 code
-        // String[] utf = {"\u2B1B", "\u2B1C", "\u2B50"};
+        String[] utf = {"\u2B1B", "\u2B1C", "\u2B50"};
 
         // output "x" as default
         for (int i = 0; i < BOARD_SIZE_ROW; i++) {
             // print value of i th row
             for (int j = 0; j < BOARD_SIZE_COL; j++) {
                 if (board[i][j] == CellState.FILLED)
-                    System.out.print("x "); // utf[0]
+                    System.out.print(utf[0]); // utf[0]
                 else if (board[i][j] == CellState.EMPTY)
-                    System.out.print("  "); // utf[1]
+                    System.out.print(utf[1]); // utf[1]
                 else
-                    System.out.print("? "); // utf[2]
+                    System.out.print(utf[2]); // utf[2]
             }
             System.out.println();
         }
     }
 
     /**
-     * Check whether the game is solved or not
+     * Check whether the game is solved or not.
+     *
      * @return bool, ture for solved
      */
-    public Boolean IsSolved(){
-        for(int i = 0; i < BOARD_SIZE_ROW; i++){
-            for(int j = 0; j < BOARD_SIZE_COL; j++){
-                if(board[i][j] == CellState.UNKNOWN)
+    public Boolean IsSolved() {
+        for (int i = 0; i < BOARD_SIZE_ROW; i++) {
+            for (int j = 0; j < BOARD_SIZE_COL; j++) {
+                if (board[i][j] == CellState.UNKNOWN)
                     return Boolean.FALSE;
             }
         }
@@ -110,7 +109,8 @@ public class GameState {
     }
 
     /**
-     * Generate board from image by calling image process class method
+     * Generate board from image by calling image process class method.
+     *
      * @param path image path
      * @throws IOException error read
      */
@@ -130,7 +130,7 @@ public class GameState {
     }
 
     /**
-     * Generate hint from board, used when image input available
+     * Generate hint from board, used when image input available.
      */
     private void GenerateHint() {
         int cnt = 0; // counter for continuous filled cells
@@ -172,16 +172,17 @@ public class GameState {
     } // end GenerateHint
 
     /**
-     * Generate string representation for board, 0 for empty, 1 for filled, 2 for undefined
+     * Generate string representation for board, 0 for empty, 1 for filled, 2 for undefined.
+     *
      * @return string of board state
      */
-    String GenerateString(){
+    String GenerateString() {
         StringBuilder str = new StringBuilder();
-        for(int i = 0; i < BOARD_SIZE_ROW; i++){
-            for(int j = 0; j < BOARD_SIZE_COL; j++){
-                if(board[i][j] == CellState.UNKNOWN)
+        for (int i = 0; i < BOARD_SIZE_ROW; i++) {
+            for (int j = 0; j < BOARD_SIZE_COL; j++) {
+                if (board[i][j] == CellState.UNKNOWN)
                     str.append(2);
-                else if(board[i][j] == CellState.FILLED)
+                else if (board[i][j] == CellState.FILLED)
                     str.append(1);
                 else
                     str.append(0);
@@ -191,11 +192,18 @@ public class GameState {
     }
 
     /**
-     * Generate hash for board
+     * Generate hash of board.
+     *
      * @return hash value
      */
-    int BoardHash(){
+    int BoardHash() {
         return Arrays.deepHashCode(board);
+    }
+
+    enum CellState {
+        FILLED,
+        EMPTY,
+        UNKNOWN
     }
 
 }

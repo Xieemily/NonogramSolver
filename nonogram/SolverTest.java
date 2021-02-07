@@ -6,7 +6,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SolverTest {
+public class SolverTest {
     GameState state = new GameState(10,10);
     private final Solver solver= new Solver();
 

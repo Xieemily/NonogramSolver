@@ -6,6 +6,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Process image, convert image to binary and save it in 2d int array rec[][]
+ */
 class ImgProcess {
     private static int IMG_SIZE_X;
     private static int IMG_SIZE_Y;
@@ -14,7 +17,7 @@ class ImgProcess {
     /**
      * Read image from file and convert it to binary image
      *
-     * @param path      path of source image
+     * @param path         path of source image
      * @param _gameSizeRow specify board length
      * @param _gameSizeCol specify board length
      */
@@ -67,9 +70,10 @@ class ImgProcess {
 
     /**
      * Resize image to desired size
+     *
      * @param originalImage original image
-     * @param targetWidth target width(px)
-     * @param targetHeight target height(px)
+     * @param targetWidth   target width(px)
+     * @param targetHeight  target height(px)
      * @return resized image
      */
     private BufferedImage ResizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
