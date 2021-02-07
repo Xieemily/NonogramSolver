@@ -63,8 +63,6 @@ class ImgProcess {
                 }
             }
         }
-        File file = new File("MyImage.jpg");
-        ImageIO.write(binaryImg, "jpg", file);
         return binaryImg;
     }
 

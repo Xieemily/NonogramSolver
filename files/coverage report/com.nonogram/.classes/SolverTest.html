@@ -1,0 +1,211 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SolverTest</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.nonogram</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SolverTest (com.nonogram)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SolverTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (69/ 69)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.nonogram;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.junit.jupiter.api.Test;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.util.*;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import static org.junit.jupiter.api.Assertions.*;
+<i>8</i>&nbsp;
+<b class="fc"><i>9</i>&nbsp;class SolverTest {</b>
+<b class="fc"><i>10</i>&nbsp;    GameState state = new GameState(10,10);</b>
+<b class="fc"><i>11</i>&nbsp;    private final Solver solver= new Solver();</b>
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    // covers hint = [1]
+<i>14</i>&nbsp;    @Test
+<i>15</i>&nbsp;    void TestLabeling1(){
+<b class="fc"><i>16</i>&nbsp;        List&lt;Integer&gt; hint = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>17</i>&nbsp;        hint.add(1);</b>
+<i>18</i>&nbsp;        List&lt;Integer&gt; labeling;
+<b class="fc"><i>19</i>&nbsp;        labeling = Arrays.asList(-1,-1,2,-3,-3);</b>
+<b class="fc"><i>20</i>&nbsp;        assertEquals(labeling, solver.GenerateLabeling(hint));</b>
+<b class="fc"><i>21</i>&nbsp;    }</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    // covers hint = [2, 1]
+<i>24</i>&nbsp;    @Test
+<i>25</i>&nbsp;    void TestLabeling(){
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;        List&lt;Integer&gt; hint;
+<i>28</i>&nbsp;        List&lt;Integer&gt; arr;
+<b class="fc"><i>29</i>&nbsp;        hint = Arrays.asList(2, 1);</b>
+<b class="fc"><i>30</i>&nbsp;        arr = Arrays.asList(-1, -1, 2, 3, -4, -4, 5, -6, -6);</b>
+<b class="fc"><i>31</i>&nbsp;        assertEquals(arr, solver.GenerateLabeling(hint), &quot;Labeling&quot;);</b>
+<b class="fc"><i>32</i>&nbsp;    }</b>
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    // covers shift = -1
+<i>35</i>&nbsp;    // map {-1=[-1], 2=[-1], 3=[2], 4=[3], -5=[4, -5], 6=[-5], 7=[6], 8=[7], 9=[8], -10=[9, -10]}
+<i>36</i>&nbsp;    @Test
+<i>37</i>&nbsp;    void TestGenerateMapPrevious(){
+<i>38</i>&nbsp;        List&lt;Integer&gt; hint;
+<b class="fc"><i>39</i>&nbsp;        hint = Arrays.asList(3, 4);</b>
+<b class="fc"><i>40</i>&nbsp;        System.out.println(solver.GenerateMap(hint, -1));</b>
+<b class="fc"><i>41</i>&nbsp;    }</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    // covers shift = 1
+<i>44</i>&nbsp;    // map {-1=[-1, 2], 2=[3], 3=[4], 4=[-5], -5=[-5, 6], 6=[7], 7=[8], 8=[9], 9=[-10], -10=[-10]}
+<i>45</i>&nbsp;    @Test
+<i>46</i>&nbsp;    void TestGenerateMapFront(){
+<i>47</i>&nbsp;        List&lt;Integer&gt; hint;
+<b class="fc"><i>48</i>&nbsp;        hint = Arrays.asList(3, 4);</b>
+<b class="fc"><i>49</i>&nbsp;        System.out.println(solver.GenerateMap(hint, 1));</b>
+<b class="fc"><i>50</i>&nbsp;    }</b>
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    // hint = [2, 7]
+<i>53</i>&nbsp;    @Test
+<i>54</i>&nbsp;    void TestInitLine(){
+<b class="fc"><i>55</i>&nbsp;        ArrayList&lt;Integer&gt; hint = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>56</i>&nbsp;        hint.add(2); hint.add(7);</b>
+<b class="fc"><i>57</i>&nbsp;        System.out.println(solver.InitLine(hint, Boolean.TRUE));</b>
+<b class="fc"><i>58</i>&nbsp;    }</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    // covers hint = []
+<i>61</i>&nbsp;    @Test
+<i>62</i>&nbsp;    void TestInitLineEmpty(){
+<b class="fc"><i>63</i>&nbsp;        ArrayList&lt;Integer&gt; hint = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>64</i>&nbsp;        System.out.println(solver.InitLine(hint, Boolean.FALSE));</b>
+<b class="fc"><i>65</i>&nbsp;    }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    // covers hint = [1]
+<i>68</i>&nbsp;    @Test
+<i>69</i>&nbsp;    void TestInitLineOne(){
+<b class="fc"><i>70</i>&nbsp;        ArrayList&lt;Integer&gt; hint = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>71</i>&nbsp;        hint.add(1);</b>
+<b class="fc"><i>72</i>&nbsp;        System.out.println(solver.InitLine(hint, Boolean.TRUE));</b>
+<b class="fc"><i>73</i>&nbsp;    }</b>
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    // covers hint = [10]
+<i>76</i>&nbsp;    @Test
+<i>77</i>&nbsp;    void TestInitLineFull(){
+<b class="fc"><i>78</i>&nbsp;        ArrayList&lt;Integer&gt; hint = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>79</i>&nbsp;        hint.add(10);</b>
+<b class="fc"><i>80</i>&nbsp;        System.out.println(solver.InitLine(hint, Boolean.FALSE));</b>
+<b class="fc"><i>81</i>&nbsp;    }</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    // covers hint = [1]
+<i>84</i>&nbsp;    @Test
+<i>85</i>&nbsp;    void forwardPassOne() {
+<b class="fc"><i>86</i>&nbsp;        List&lt;Integer&gt; hint = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>87</i>&nbsp;        hint.add(1);</b>
+<b class="fc"><i>88</i>&nbsp;        List&lt;Integer&gt; labeling = solver.GenerateLabeling(hint);</b>
+<b class="fc"><i>89</i>&nbsp;        System.out.println(labeling);</b>
+<b class="fc"><i>90</i>&nbsp;        List&lt;Set&lt;Integer&gt;&gt; lineSet = solver.InitLine(hint, Boolean.TRUE);</b>
+<b class="fc"><i>91</i>&nbsp;        System.out.println(lineSet);</b>
+<b class="fc"><i>92</i>&nbsp;        Map&lt;Integer, Set&lt;Integer&gt;&gt; map = solver.GenerateMap(hint, 1);</b>
+<b class="fc"><i>93</i>&nbsp;        System.out.println(map);</b>
+<b class="fc"><i>94</i>&nbsp;        lineSet.get(0).remove(-1);</b>
+<b class="fc"><i>95</i>&nbsp;        List&lt;Set&lt;Integer&gt;&gt; lineSetPassed = solver.ForwardPass(lineSet, map);</b>
+<b class="fc"><i>96</i>&nbsp;        System.out.println(lineSetPassed);</b>
+<b class="fc"><i>97</i>&nbsp;    }</b>
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    @Test
+<i>100</i>&nbsp;    void forwardPass() {
+<b class="fc"><i>101</i>&nbsp;        List&lt;Integer&gt; hint = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>102</i>&nbsp;        hint.add(3);</b>
+<b class="fc"><i>103</i>&nbsp;        hint.add(4);</b>
+<b class="fc"><i>104</i>&nbsp;        List&lt;Integer&gt; labeling = solver.GenerateLabeling(hint);</b>
+<b class="fc"><i>105</i>&nbsp;        List&lt;Set&lt;Integer&gt;&gt; lineSet = solver.InitLine(hint, Boolean.FALSE);</b>
+<b class="fc"><i>106</i>&nbsp;        System.out.println(lineSet);</b>
+<b class="fc"><i>107</i>&nbsp;        Map&lt;Integer, Set&lt;Integer&gt;&gt; map = solver.GenerateMap(labeling, 1);</b>
+<b class="fc"><i>108</i>&nbsp;        System.out.println(map);</b>
+<b class="fc"><i>109</i>&nbsp;        lineSet.get(0).remove(2);</b>
+<b class="fc"><i>110</i>&nbsp;        List&lt;Set&lt;Integer&gt;&gt; lineSetPassed = solver.ForwardPass(lineSet, map);</b>
+<b class="fc"><i>111</i>&nbsp;        System.out.println(lineSetPassed);</b>
+<b class="fc"><i>112</i>&nbsp;    }</b>
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;    @Test
+<i>115</i>&nbsp;    void backwardPass() {
+<b class="fc"><i>116</i>&nbsp;        List&lt;Integer&gt; hint = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>117</i>&nbsp;        hint.add(3);</b>
+<b class="fc"><i>118</i>&nbsp;        hint.add(4);</b>
+<b class="fc"><i>119</i>&nbsp;        List&lt;Integer&gt; labeling = solver.GenerateLabeling(hint);</b>
+<b class="fc"><i>120</i>&nbsp;        List&lt;Set&lt;Integer&gt;&gt; lineSet = solver.InitLine(hint, Boolean.FALSE);</b>
+<b class="fc"><i>121</i>&nbsp;        System.out.println(lineSet);</b>
+<b class="fc"><i>122</i>&nbsp;        Map&lt;Integer, Set&lt;Integer&gt;&gt; map = solver.GenerateMap(labeling, -1);</b>
+<b class="fc"><i>123</i>&nbsp;        System.out.println(map);</b>
+<b class="fc"><i>124</i>&nbsp;        lineSet.get(9).remove(-10);</b>
+<b class="fc"><i>125</i>&nbsp;        List&lt;Set&lt;Integer&gt;&gt; lineSetPassed = solver.BackwardPass(lineSet, map);</b>
+<b class="fc"><i>126</i>&nbsp;        System.out.println(lineSetPassed);</b>
+<b class="fc"><i>127</i>&nbsp;    }</b>
+<i>128</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2021-02-07 12:02</div>
+</div>
+</body>
+</html>

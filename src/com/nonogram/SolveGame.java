@@ -231,10 +231,10 @@ class SolveGame extends GameState {
 
                         board = recBoard;
 
-                    }
+                    } // end label value for
                 }
-            }
-        }
+            } // end col for
+        }// end row for
     }
 
 }

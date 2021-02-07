@@ -111,6 +111,7 @@ class Main {
             System.out.println("""
                     -s [input file] [output file] solve puzzle from hint input
                     -g [image file] [output file] generate hint from image
+                    -t [input file] [output file] test game
                     \s""");
             return;
         }

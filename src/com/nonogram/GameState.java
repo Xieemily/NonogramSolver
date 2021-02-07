@@ -83,11 +83,11 @@ class GameState {
             // print value of i th row
             for (int j = 0; j < BOARD_SIZE_COL; j++) {
                 if (board[i][j] == CellState.FILLED)
-                    System.out.print(utf[0]); // utf[0]
+                    System.out.print("x "); // utf[0]
                 else if (board[i][j] == CellState.EMPTY)
-                    System.out.print(utf[1]); // utf[1]
+                    System.out.print("  "); // utf[1]
                 else
-                    System.out.print(utf[2]); // utf[2]
+                    System.out.print("? "); // utf[2]
             }
             System.out.println();
         }

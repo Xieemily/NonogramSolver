@@ -1,0 +1,315 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GameState</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.nonogram</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GameState (com.nonogram)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GameState</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98.9%
+  </span>
+  <span class="absValue">
+    (87/ 88)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GameState$CellState</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (14/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98.9%
+  </span>
+  <span class="absValue">
+    (91/ 92)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.nonogram;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.util.ArrayList;
+<i>5</i>&nbsp;import java.util.Arrays;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;public class GameState {
+<i>9</i>&nbsp;    static int BOARD_SIZE_ROW;
+<i>10</i>&nbsp;    static int BOARD_SIZE_COL;
+<i>11</i>&nbsp;    CellState[][] board;
+<b class="fc"><i>12</i>&nbsp;    List&lt;List&lt;Integer&gt;&gt; hintRow = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>13</i>&nbsp;    List&lt;List&lt;Integer&gt;&gt; hintCol = new ArrayList&lt;&gt;();</b>
+<i>14</i>&nbsp;    /**
+<i>15</i>&nbsp;     * For test. Should never be used.
+<i>16</i>&nbsp;     */
+<b class="fc"><i>17</i>&nbsp;    GameState(int _gameSizeRow, int _gameSizeCol) {</b>
+<b class="fc"><i>18</i>&nbsp;        BOARD_SIZE_ROW = _gameSizeRow;</b>
+<b class="fc"><i>19</i>&nbsp;        BOARD_SIZE_COL = _gameSizeCol;</b>
+<b class="fc"><i>20</i>&nbsp;        board = new CellState[BOARD_SIZE_ROW][BOARD_SIZE_COL];</b>
+<b class="fc"><i>21</i>&nbsp;        for (int i = 0; i &lt; BOARD_SIZE_ROW; i++)</b>
+<b class="fc"><i>22</i>&nbsp;            for (int j = 0; j &lt; BOARD_SIZE_COL; j++)</b>
+<b class="fc"><i>23</i>&nbsp;                board[i][j] = CellState.UNKNOWN;</b>
+<b class="fc"><i>24</i>&nbsp;    }</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /**
+<i>27</i>&nbsp;     * Generate game from hint.
+<i>28</i>&nbsp;     *
+<i>29</i>&nbsp;     * @param _hintRow     list of list of hint
+<i>30</i>&nbsp;     * @param _hintCol     list of list of hint
+<i>31</i>&nbsp;     * @param _gameSizeRow board row length
+<i>32</i>&nbsp;     * @param _gameSizeCol board col length
+<i>33</i>&nbsp;     */
+<i>34</i>&nbsp;    GameState(List&lt;List&lt;Integer&gt;&gt; _hintRow, List&lt;List&lt;Integer&gt;&gt; _hintCol,
+<b class="fc"><i>35</i>&nbsp;              int _gameSizeRow, int _gameSizeCol) {</b>
+<b class="fc"><i>36</i>&nbsp;        BOARD_SIZE_ROW = _gameSizeRow;</b>
+<b class="fc"><i>37</i>&nbsp;        BOARD_SIZE_COL = _gameSizeCol;</b>
+<b class="fc"><i>38</i>&nbsp;        hintRow = _hintRow;</b>
+<b class="fc"><i>39</i>&nbsp;        hintCol = _hintCol;</b>
+<b class="fc"><i>40</i>&nbsp;        board = new CellState[BOARD_SIZE_ROW][BOARD_SIZE_COL];</b>
+<b class="fc"><i>41</i>&nbsp;        for (int i = 0; i &lt; BOARD_SIZE_ROW; i++)</b>
+<b class="fc"><i>42</i>&nbsp;            for (int j = 0; j &lt; BOARD_SIZE_COL; j++)</b>
+<b class="fc"><i>43</i>&nbsp;                board[i][j] = CellState.UNKNOWN;</b>
+<b class="fc"><i>44</i>&nbsp;    }</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     * Generate game when image is specified, hint is generated.
+<i>48</i>&nbsp;     *
+<i>49</i>&nbsp;     * @param path         image path
+<i>50</i>&nbsp;     * @param _gameSizeRow board length y
+<i>51</i>&nbsp;     * @param _gameSizeCol board length x
+<i>52</i>&nbsp;     * @throws IOException input error
+<i>53</i>&nbsp;     */
+<b class="fc"><i>54</i>&nbsp;    GameState(String path, int _gameSizeRow, int _gameSizeCol) throws IOException {</b>
+<b class="fc"><i>55</i>&nbsp;        BOARD_SIZE_ROW = _gameSizeRow;</b>
+<b class="fc"><i>56</i>&nbsp;        BOARD_SIZE_COL = _gameSizeCol;</b>
+<b class="fc"><i>57</i>&nbsp;        board = new CellState[BOARD_SIZE_ROW][BOARD_SIZE_COL];</b>
+<b class="fc"><i>58</i>&nbsp;        GenerateGameFromImg(path);</b>
+<b class="fc"><i>59</i>&nbsp;        GenerateHint();</b>
+<b class="fc"><i>60</i>&nbsp;    }</b>
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    public static int getBoardSizeRow() {
+<b class="fc"><i>63</i>&nbsp;        return BOARD_SIZE_ROW;</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    public static int getBoardSizeCol() {
+<b class="fc"><i>67</i>&nbsp;        return BOARD_SIZE_COL;</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    public void setBoard(CellState state, int x, int y) {
+<b class="fc"><i>71</i>&nbsp;        board[x][y] = state;</b>
+<b class="fc"><i>72</i>&nbsp;    }</b>
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    void ShowBoard() {
+<i>75</i>&nbsp;        // output pretty square symbol if possible by change to the following utf-8 code
+<i>76</i>&nbsp;        // String[] utf = {&quot;\u2B1B&quot;, &quot;\u2B1C&quot;, &quot;\u2B50&quot;};
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;        // output &quot;x&quot; as default
+<b class="fc"><i>79</i>&nbsp;        for (int i = 0; i &lt; BOARD_SIZE_ROW; i++) {</b>
+<i>80</i>&nbsp;            // print value of i th row
+<b class="fc"><i>81</i>&nbsp;            for (int j = 0; j &lt; BOARD_SIZE_COL; j++) {</b>
+<b class="fc"><i>82</i>&nbsp;                if (board[i][j] == CellState.FILLED)</b>
+<b class="fc"><i>83</i>&nbsp;                    System.out.print(&quot;x &quot;); // utf[0]</b>
+<b class="fc"><i>84</i>&nbsp;                else if (board[i][j] == CellState.EMPTY)</b>
+<b class="fc"><i>85</i>&nbsp;                    System.out.print(&quot;  &quot;); // utf[1]</b>
+<i>86</i>&nbsp;                else
+<b class="nc"><i>87</i>&nbsp;                    System.out.print(&quot;? &quot;); // utf[2]</b>
+<i>88</i>&nbsp;            }
+<b class="fc"><i>89</i>&nbsp;            System.out.println();</b>
+<i>90</i>&nbsp;        }
+<b class="fc"><i>91</i>&nbsp;    }</b>
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    /**
+<i>94</i>&nbsp;     * Check whether the game is solved or not.
+<i>95</i>&nbsp;     *
+<i>96</i>&nbsp;     * @return bool, ture for solved
+<i>97</i>&nbsp;     */
+<i>98</i>&nbsp;    public Boolean IsSolved() {
+<b class="fc"><i>99</i>&nbsp;        for (int i = 0; i &lt; BOARD_SIZE_ROW; i++) {</b>
+<b class="fc"><i>100</i>&nbsp;            for (int j = 0; j &lt; BOARD_SIZE_COL; j++) {</b>
+<b class="fc"><i>101</i>&nbsp;                if (board[i][j] == CellState.UNKNOWN)</b>
+<b class="fc"><i>102</i>&nbsp;                    return Boolean.FALSE;</b>
+<i>103</i>&nbsp;            }
+<i>104</i>&nbsp;        }
+<b class="fc"><i>105</i>&nbsp;        return Boolean.TRUE;</b>
+<i>106</i>&nbsp;    }
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;    /**
+<i>109</i>&nbsp;     * Generate board from image by calling image process class method.
+<i>110</i>&nbsp;     *
+<i>111</i>&nbsp;     * @param path image path
+<i>112</i>&nbsp;     * @throws IOException error read
+<i>113</i>&nbsp;     */
+<i>114</i>&nbsp;    private void GenerateGameFromImg(String path) throws IOException {
+<b class="fc"><i>115</i>&nbsp;        ImgProcess imgProcess = new ImgProcess();</b>
+<b class="fc"><i>116</i>&nbsp;        imgProcess.ProcessImage(path, BOARD_SIZE_ROW, BOARD_SIZE_COL);</b>
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;        // copy processed image array to board
+<b class="fc"><i>119</i>&nbsp;        for (int i = 0; i &lt; GameState.getBoardSizeRow(); i++)</b>
+<b class="fc"><i>120</i>&nbsp;            for (int j = 0; j &lt; GameState.getBoardSizeCol(); j++) {</b>
+<b class="fc"><i>121</i>&nbsp;                if (imgProcess.rec[i][j] == 1) {</b>
+<b class="fc"><i>122</i>&nbsp;                    board[i][j] = CellState.FILLED;</b>
+<i>123</i>&nbsp;                } else
+<b class="fc"><i>124</i>&nbsp;                    board[i][j] = CellState.EMPTY;</b>
+<i>125</i>&nbsp;            }
+<i>126</i>&nbsp;
+<b class="fc"><i>127</i>&nbsp;    }</b>
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;    /**
+<i>130</i>&nbsp;     * Generate hint from board, used when image input available.
+<i>131</i>&nbsp;     */
+<i>132</i>&nbsp;    private void GenerateHint() {
+<b class="fc"><i>133</i>&nbsp;        int cnt = 0; // counter for continuous filled cells</b>
+<i>134</i>&nbsp;        // row
+<b class="fc"><i>135</i>&nbsp;        for (CellState[] cellStates : board) {</b>
+<b class="fc"><i>136</i>&nbsp;            List&lt;Integer&gt; arrayList = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>137</i>&nbsp;            for (int j = 0; j &lt; GameState.getBoardSizeCol(); j++) {</b>
+<b class="fc"><i>138</i>&nbsp;                if (cellStates[j] == CellState.FILLED) {</b>
+<b class="fc"><i>139</i>&nbsp;                    cnt++; // count continuous cells</b>
+<b class="fc"><i>140</i>&nbsp;                    if (j == GameState.getBoardSizeCol() - 1) {</b>
+<b class="fc"><i>141</i>&nbsp;                        arrayList.add(cnt); // last cell is filled, store cnt</b>
+<b class="fc"><i>142</i>&nbsp;                        cnt = 0;</b>
+<i>143</i>&nbsp;                    }
+<i>144</i>&nbsp;                } else { // this cell is empty, store number of previous continuous cells
+<b class="fc"><i>145</i>&nbsp;                    if (cnt != 0) arrayList.add(cnt);</b>
+<b class="fc"><i>146</i>&nbsp;                    cnt = 0; // reset cnt</b>
+<i>147</i>&nbsp;                }
+<i>148</i>&nbsp;            }
+<b class="fc"><i>149</i>&nbsp;            hintRow.add(arrayList);</b>
+<i>150</i>&nbsp;        } // end for
+<b class="fc"><i>151</i>&nbsp;        cnt = 0;</b>
+<i>152</i>&nbsp;        // column, same as above
+<b class="fc"><i>153</i>&nbsp;        for (int i = 0; i &lt; GameState.getBoardSizeCol(); i++) {</b>
+<b class="fc"><i>154</i>&nbsp;            ArrayList&lt;Integer&gt; arrayList = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>155</i>&nbsp;            for (int j = 0; j &lt; GameState.getBoardSizeRow(); j++) {</b>
+<b class="fc"><i>156</i>&nbsp;                if (board[j][i] == CellState.FILLED) {</b>
+<b class="fc"><i>157</i>&nbsp;                    cnt++;</b>
+<b class="fc"><i>158</i>&nbsp;                    if (j == GameState.getBoardSizeRow() - 1) {</b>
+<b class="fc"><i>159</i>&nbsp;                        arrayList.add(cnt); // last cell</b>
+<b class="fc"><i>160</i>&nbsp;                        cnt = 0;</b>
+<i>161</i>&nbsp;                    }
+<i>162</i>&nbsp;                } else {
+<b class="fc"><i>163</i>&nbsp;                    if (cnt != 0) arrayList.add(cnt);</b>
+<b class="fc"><i>164</i>&nbsp;                    cnt = 0;</b>
+<i>165</i>&nbsp;                }
+<i>166</i>&nbsp;            }
+<b class="fc"><i>167</i>&nbsp;            hintCol.add(arrayList);</b>
+<i>168</i>&nbsp;        } // end for
+<b class="fc"><i>169</i>&nbsp;    } // end GenerateHint</b>
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;    /**
+<i>172</i>&nbsp;     * Generate string representation for board, 0 for empty, 1 for filled, 2 for undefined.
+<i>173</i>&nbsp;     *
+<i>174</i>&nbsp;     * @return string of board state
+<i>175</i>&nbsp;     */
+<i>176</i>&nbsp;    String GenerateString() {
+<b class="fc"><i>177</i>&nbsp;        StringBuilder str = new StringBuilder();</b>
+<b class="fc"><i>178</i>&nbsp;        for (int i = 0; i &lt; BOARD_SIZE_ROW; i++) {</b>
+<b class="fc"><i>179</i>&nbsp;            for (int j = 0; j &lt; BOARD_SIZE_COL; j++) {</b>
+<b class="fc"><i>180</i>&nbsp;                if (board[i][j] == CellState.UNKNOWN)</b>
+<b class="fc"><i>181</i>&nbsp;                    str.append(2);</b>
+<b class="fc"><i>182</i>&nbsp;                else if (board[i][j] == CellState.FILLED)</b>
+<b class="fc"><i>183</i>&nbsp;                    str.append(1);</b>
+<i>184</i>&nbsp;                else
+<b class="fc"><i>185</i>&nbsp;                    str.append(0);</b>
+<i>186</i>&nbsp;            }
+<i>187</i>&nbsp;        }
+<b class="fc"><i>188</i>&nbsp;        return str.toString();</b>
+<i>189</i>&nbsp;    }
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;    /**
+<i>192</i>&nbsp;     * Generate hash of board.
+<i>193</i>&nbsp;     *
+<i>194</i>&nbsp;     * @return hash value
+<i>195</i>&nbsp;     */
+<i>196</i>&nbsp;    int BoardHash() {
+<b class="fc"><i>197</i>&nbsp;        return Arrays.deepHashCode(board);</b>
+<i>198</i>&nbsp;    }
+<i>199</i>&nbsp;
+<b class="fc"><i>200</i>&nbsp;    enum CellState {</b>
+<b class="fc"><i>201</i>&nbsp;        FILLED,</b>
+<b class="fc"><i>202</i>&nbsp;        EMPTY,</b>
+<b class="fc"><i>203</i>&nbsp;        UNKNOWN</b>
+<i>204</i>&nbsp;    }
+<i>205</i>&nbsp;
+<i>206</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2021-02-07 12:02</div>
+</div>
+</body>
+</html>
