@@ -1,7 +1,7 @@
 # Nonogram
 A nonogram generator and solver， generate hint from image or solve game provided hint, all possible solutions can be found.
 
-### See my [Blog](http://xie_emily.gitee.io/xieemily.github.io) for details.
+### See my [Blog](https://xieemily.github.io/post/test_post/) for details.（Chinese)
 
 
 
